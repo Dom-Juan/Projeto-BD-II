@@ -1,12 +1,15 @@
+const { customAlphabet } = require('nanoid');
 const connection = require('../config/connection');
 const query_exec = require('../helpers/query_exec');
+
+const nanoid = customAlphabet('abcde1234567089', 3);
 
 module.exports = {
   insert({nome_coord, tipo_usuario_coord, curso_coord, data_como_coord}) {
     return query_exec(
       connection,
-      "insert into coordenador (nome_coord, tipo_usuario_coord, curso_coord, data_como_coord) values (?, ?, ?, ?, ?)",
-      [nome_coord, tipo_usuario_coord, curso_coord, data_como_coord]
+      "insert into coordenador (id_coord, nome_coord, tipo_usuario_coord, curso_coord, data_como_coord) values (?, ?, ?, ?, ?)",
+      [nanoid(3), nome_coord, tipo_usuario_coord, curso_coord, data_como_coord]
     );
   },
 
@@ -25,14 +28,6 @@ module.exports = {
     );
   },
 
-  getByRa(ra_aluno) {
-    return query_exec(
-      connection,
-      "select * from usuario where ra_aluno = ?",
-      [ra_aluno]
-    );
-  },
-
   getByNome(nome_coord) {
     return query_exec(
       connection,
@@ -41,7 +36,7 @@ module.exports = {
     );
   },
 
-  deleteCoord(id_coord, nome_coord) {
+  delete(id_coord, nome_coord) {
     try {
       return query_exec(
         connection,

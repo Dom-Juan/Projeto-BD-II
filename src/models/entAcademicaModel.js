@@ -5,7 +5,7 @@ module.exports = {
   insert({nome_ent_acad, ano_abertura_acad, quant_alunos_acad, quant_horas_avaliar_acad}) {
     return query_exec(
       connection,
-      "insert into ent_academica (nome_ent_acad, ano_abertura_acad, quant_alunos_acad, quant_horas_avaliar_acad) values (?, ?, ?, ?, ?)",
+      "insert into ent_academica (nome_ent_acad, ano_abertura_acad, quant_alunos_acad, quant_horas_avaliar_acad) values (?, ?, ?, ?)",
       [nome_ent_acad, ano_abertura_acad, quant_alunos_acad, quant_horas_avaliar_acad]
     );
   },
@@ -26,7 +26,7 @@ module.exports = {
     );
   },
 
-  deleteEntAcademica(nome_ent_acad, ano_abertura_acad) {
+  delete(nome_ent_acad, ano_abertura_acad) {
     try {
       return query_exec(
         connection,

@@ -5,7 +5,7 @@ module.exports = {
   insert({nome_curso, ano_curso, tipo_curso, coordenador_curso}) {
     return query_exec(
       connection,
-      "insert into curso (nome_curso, ano_curso, tipo_curso, coordenador_curso) values (?, ?, ?, ?, ?)",
+      "insert into curso (nome_curso, ano_curso, tipo_curso, coordenador_curso) values (?, ?, ?)",
       [nome_curso, ano_curso, tipo_curso, coordenador_curso]
     );
   },
@@ -33,7 +33,7 @@ module.exports = {
     );
   },
 
-  deleteCurso(nome_curso, tipo_curso) {
+  delete(nome_curso, tipo_curso) {
     try {
       return query_exec(
         connection,

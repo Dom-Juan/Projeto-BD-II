@@ -1,6 +1,7 @@
+const { customAlphabet } = require('nanoid');
 const connection = require('../config/connection');
 const query_exec = require('../helpers/query_exec');
-
+const nanoid = customAlphabet('1234567089abcde', 3);
 module.exports = {
   insert({
     data_ini_atividade,
@@ -14,8 +15,8 @@ module.exports = {
   }) {
     return query_exec(
       connection,
-      "insert into atividade_extra (data_ini_atividade, data_fim_atividade, nome_atividade, ra_aluno_atividade, tipo_curso_atividade, horas_atividade, tipo_atividade, url_atividade) values (?, ?, ?, ?, ?)",
-      [data_ini_atividade, data_fim_atividade, nome_atividade, ra_aluno_atividade, tipo_curso_atividade, horas_atividade, tipo_atividade, url_atividade]
+      "insert into atividade_extra (id_atividade, data_ini_atividade, data_fim_atividade, nome_atividade, ra_aluno_atividade, tipo_curso_atividade, horas_atividade, tipo_atividade, url_atividade) values (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      [nanoid(3), data_ini_atividade, data_fim_atividade, nome_atividade, ra_aluno_atividade, tipo_curso_atividade, horas_atividade, tipo_atividade, url_atividade]
     );
   },
 
@@ -66,7 +67,7 @@ module.exports = {
     );
   },
 
-  deleteAtividade(id_atividade, nome_atividade) {
+  delete(id_atividade, nome_atividade) {
     try {
       return query_exec(
         connection,
