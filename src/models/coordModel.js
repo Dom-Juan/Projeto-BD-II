@@ -1,15 +1,13 @@
-const { customAlphabet } = require('nanoid');
 const connection = require('../config/connection');
 const query_exec = require('../helpers/query_exec');
 
-const nanoid = customAlphabet('abcde1234567089', 3);
-
 module.exports = {
-  insert({nome_coord, tipo_usuario_coord, curso_coord, data_como_coord}) {
+  insert({nome_coord, tipo_usuario_coord, curso_coord, data_como_coord}, id_coord) {
+    console.log("Id gerado: ", id_coord);
     return query_exec(
       connection,
       "insert into coordenador (id_coord, nome_coord, tipo_usuario_coord, curso_coord, data_como_coord) values (?, ?, ?, ?, ?)",
-      [nanoid(3), nome_coord, tipo_usuario_coord, curso_coord, data_como_coord]
+      [id_coord, nome_coord, tipo_usuario_coord, curso_coord, data_como_coord]
     );
   },
 
@@ -21,7 +19,7 @@ module.exports = {
     );
   },
 
-  getByCurso() {
+  getByCurso(curso_coord) {
     return query_exec(connection,
       "select * from coordenador where curso = ?",
       [curso_coord]
@@ -31,16 +29,16 @@ module.exports = {
   getByNome(nome_coord) {
     return query_exec(
       connection,
-      "select * from coordenador where email = ?",
+      "select * from coordenador where nome_coord = ?",
       [nome_coord]
     );
   },
 
-  delete(id_coord, nome_coord) {
+  delete(nome_coord, id_coord) {
     try {
       return query_exec(
         connection,
-        'select * from coordenador where id_coord = ? and nome_coord = ?',
+        'delete from coordenador where id_coord = ? and nome_coord = ?',
         [id_coord, nome_coord]);
     } catch(e) {
       console.error(e);

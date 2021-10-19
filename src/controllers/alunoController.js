@@ -12,11 +12,21 @@ module.exports = {
       }
 
       let usuario = await usuarioModel.getById(req.body.id_usuario);
-      console.log("Aluno a ser inserido:", usuario);
 
-      const newAluno = await alunoModel.insert(req.body, usuario[0].id_usuario);
-
-      return res.json({newAluno});
+      if(usuario.length === 0) {
+        return res.json({msg: "Usuário não existe!"});
+      } else {
+        if(usuario[0].tipo_usuario !== "coordenador") {
+          console.log("Usuário pego:", usuario);
+          console.log("Aluno a ser inserido:", usuario);
+    
+          const newAluno = await alunoModel.insert(req.body, usuario[0].id_usuario);
+    
+          return res.json({newAluno});
+        } else {
+          return res.status(500).json({msg: "Usuário é um coordenador."});
+        }
+      }
     } catch(error) {
       console.error(error);
       return res.status(500).json({msg: "internal server error"});
@@ -55,8 +65,17 @@ module.exports = {
 
   async deleteAluno(req, res) {
     try {
-      const response = await alunoModel.delete(req.body.nome_aluno, req.body.ra_aluno);
-      if(response) return res.status(200).json({response});
+      let usuario = await usuarioModel.getById(req.body.id_usuario);
+      
+      if(usuario.length === 0) {
+        return res.status(500).json({msg: "Usuário não existe!"});
+      } else {
+        const response = await alunoModel.delete(req.body.nome_aluno, req.body.ra_aluno);
+        const response2 = await usuarioModel.delete(usuario[0].nome_usuario, usuario[0].id_usuario)
+        if(response.affectedRows != 0 && response2) return res.status(200).json({response});
+        else if(response.affectedRows === 0) return res.status(500).json({msg: 'Aluno já foi deletado ou inexistente.'});
+        else return res.status(500).json({response});
+      }
     } catch(error) {
       console.error(error);
       return res.status(500).json({msg: 'internal server error'});

@@ -51,12 +51,12 @@ module.exports = {
     );
   },
 
-  delete(nome_usuario, email_usuario) {
+  delete(nome_usuario, id_usuario) {
     try {
       return query_exec(
         connection,
-        'select * from usuario where nome_usuario = ? and email_usuario = ?',
-        [nome_usuario, email_usuario]);
+        'delete from usuario where nome_usuario = ? and id_usuario = ?',
+        [nome_usuario, id_usuario]);
     } catch(e) {
       console.error(e);
       throw e;

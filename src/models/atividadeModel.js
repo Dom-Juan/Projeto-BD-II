@@ -71,7 +71,7 @@ module.exports = {
     try {
       return query_exec(
         connection,
-        'select * from atividade_extra where id_atividade = ? and nome_atividade = ?',
+        'delete from atividade_extra where id_atividade = ? and nome_atividade = ?',
         [id_atividade, nome_atividade]);
     } catch (e) {
       console.error(e);

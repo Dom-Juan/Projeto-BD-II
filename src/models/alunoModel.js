@@ -2,7 +2,7 @@ const connection = require('../config/connection');
 const query_exec = require('../helpers/query_exec');
 
 module.exports = {
-  insert({ra_aluno, nome_aluno, ano_nascimento_aluno, curso_aluno, tipo_usuario_aluno, tipo_grad_aluno}, id) {
+  insert({ ra_aluno, nome_aluno, ano_nascimento_aluno, curso_aluno, tipo_usuario_aluno, tipo_grad_aluno }, id) {
     return query_exec(
       connection,
       "insert into aluno (id_aluno, ra_aluno, nome_aluno, ano_nascimento_aluno, curso_aluno, tipo_usuario_aluno, tipo_grad_aluno) values (?, ?, ?, ?, ?, ?, ?)",
@@ -51,12 +51,12 @@ module.exports = {
 
   delete(nome_aluno, ra_aluno) {
     try {
-      console.log("Deletado [Aluno: ",nome_aluno,"RA: ", ra_aluno,"]");
+      console.log("Deletado [Aluno: ", nome_aluno, "RA: ", ra_aluno, "]");
       return query_exec(
         connection,
         'delete from aluno where nome_aluno = ? and ra_aluno = ?',
         [nome_aluno, ra_aluno]);
-    } catch(e) {
+    } catch (e) {
       console.error(e);
       throw e;
     }

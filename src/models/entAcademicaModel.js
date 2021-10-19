@@ -30,7 +30,7 @@ module.exports = {
     try {
       return query_exec(
         connection,
-        'select * from ent_academica where nome_ent_acad = ? and ano_abertura_acad = ?',
+        'delete from ent_academica where nome_ent_acad = ? and ano_abertura_acad = ?',
         [nome_ent_acad, ano_abertura_acad]);
     } catch(e) {
       console.error(e);

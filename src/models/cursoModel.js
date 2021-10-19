@@ -37,7 +37,7 @@ module.exports = {
     try {
       return query_exec(
         connection,
-        'select * from curso where nome_curso = ? and tipo_curso = ?',
+        'delete from curso where nome_curso = ? and tipo_curso = ?',
         [nome_curso, tipo_curso]);
     } catch(e) {
       console.error(e);

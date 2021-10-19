@@ -69,5 +69,17 @@ module.exports = {
       console.error(error);
       return res.status(500).json({msg: 'internal server error'});
     }
+  },
+
+  async deleteUsuario(req, res) {
+    try {
+      const response = await alunoModel.delete(req.body.nome_aluno, req.body.ra_aluno);
+      console.log(response);
+      if(response.affectedRows != 0) return res.status(200).json({response});
+      else return res.status(500).json({msg: 'Aluno já foi deletado ou inexistente.'});
+    } catch(error) {
+      console.error(error);
+      return res.status(500).json({msg: 'internal server error'});
+    }
   }
 };
