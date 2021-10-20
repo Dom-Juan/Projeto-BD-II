@@ -2,10 +2,14 @@ use cacic_vhou_;
 
 select nome_aluno from aluno where nome_aluno = "a_teste" and ra_aluno = "171257180" union select null where not exists (select * from aluno where nome_aluno = "a_teste" and ra_aluno = "171257180");
 
-delete from coordenador where nome_coord = "teste";
+delete from coordenador where nome_coord = "juan";
+
+delete from aluno where ra_aluno = "171257111";
+	
+delete from usuario where id_usuario = 595;
 
 create table usuario(
-id_usuario integer(3) ,
+ id_usuario integer(3) ,
  nome_usuario varchar(20),
  curso varchar(20),
  tipo_usuario varchar(20),
@@ -46,7 +50,7 @@ create table curso(
 );
 
 create table atividade_extra(
- id_atividade varchar(3),
+ id_atividade varchar(4),
  data_ini_atividade varchar(20),
  data_fim_atividade varchar(20),
  nome_atividade varchar(20),
@@ -54,5 +58,6 @@ create table atividade_extra(
  tipo_curso_atividade varchar(20),
  horas_atividade varchar(20),
  tipo_atividade varchar(35),
- url_atividade varchar(100)
+ url_atividade varchar(100),
+ status_atividade varchar(20)
 );

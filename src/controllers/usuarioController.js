@@ -1,13 +1,10 @@
 'use strict';
 const usuarioModel = require('../models/usuarioModel');
-const alunoModel = require('../models/coordModel');
-const coordModel = require('../models/coordModel');
+const alunoModel = require('../models/alunoModel');
 
 module.exports = {
   async insert(req, res) {
     try {
-      //const aluno = await alunoModel.getByRa(req.body.ra_aluno);
-      //const coord = await coordModel.getByName(req.body.nome_coord);
       let user = await usuarioModel.getByEmail(req.body.email_usuario);
 
       if(user.length != 0) {
@@ -20,11 +17,44 @@ module.exports = {
         return res.json({msg:"Este usuário já existe!"});
       }
 
-      const newUser = await usuarioModel.insert(req.body);
+      const newUser = await usuarioModel.insert(req.body, undefined);
 
       console.log("Usuário a ser inserido:", newUser);
 
       return res.json({newUser});
+    } catch(error) {
+      console.error(error);
+      return res.status(500).json({msg: "internal server error"});
+    }
+  },
+
+  async insert_frontend(req, res) {
+    let aluno = await alunoModel.getByRa(req.body.ra_aluno);
+    let user = await usuarioModel.getByEmail(req.body.email_usuario);
+    
+    console.log(req.body);
+    
+    try{
+      console.log(req.body);
+
+      if(aluno.length != 0) {
+        return res.json({msg:"Este usuário já existe!"});
+      } 
+
+      user = await usuarioModel.getByUsername(req.body.nome_usuario);
+
+      if(aluno.length != 0) {
+        return res.json({msg:"Este usuário já existe!"});
+      }
+      
+      if(user.length != 0) {
+        return res.json({msg:"Este usuário já existe!"});
+      }
+
+      const newUser = await usuarioModel.insert(req.body, req.body.id_usuario);
+      const newAluno = await alunoModel.insert(req.body, req.body.id_usuario);
+
+      return res.json({newUser, msg: "Usuário criado"});
     } catch(error) {
       console.error(error);
       return res.status(500).json({msg: "internal server error"});
@@ -43,8 +73,8 @@ module.exports = {
 
   async getById(req, res) {
     try {
-      const response = await usuarioModel.getById(req.body.id_usuario);
-      if(response) return res.status(200).json({response});
+      const getId = await usuarioModel.getById(req.body.id_usuario);
+      if(getId) return res.status(200).json(getId);
     } catch(error) {
       console.error(error);
       return res.status(500).json({msg: 'internal server error'});
@@ -53,8 +83,8 @@ module.exports = {
 
   async getByCurso(req, res) {
     try {
-      const response = await usuarioModel.getById(req.body.curso);
-      if(response) return res.status(200).json({response});
+      const getCurso = await usuarioModel.getById(req.body.curso);
+      if(getCurso) return res.status(200).json(getCurso);
     } catch(error) {
       console.error(error);
       return res.status(500).json({msg: 'internal server error'});
@@ -63,8 +93,9 @@ module.exports = {
 
   async getByEmail(req, res) {
     try {
-      const response = await usuarioModel.getById(req.body.usuario_email);
-      if(response) return res.status(200).json({response});
+      console.log("Usário a ser pego: ", req.body);
+      const getEmail = await usuarioModel.getByEmail(req.body.email_usuario);
+      if(getEmail) return res.status(200).json(getEmail);
     } catch(error) {
       console.error(error);
       return res.status(500).json({msg: 'internal server error'});

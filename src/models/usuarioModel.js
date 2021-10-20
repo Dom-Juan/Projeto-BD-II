@@ -5,12 +5,20 @@ const query_exec = require('../helpers/query_exec');
 const nanoid = customAlphabet('1234567890', 3);
 
 module.exports = {
-  insert({nome_usuario, curso, tipo_usuario, email_usuario, senha}) {
-    return query_exec(
-      connection,
-      "insert into usuario (id_usuario, nome_usuario, curso, tipo_usuario, email_usuario, senha) values (?, ?, ?, ?, ?, ?)",
-      [nanoid(3), nome_usuario, curso, tipo_usuario, email_usuario, senha]
-    );
+  insert({nome_usuario, curso, tipo_usuario, email_usuario, senha}, id) {
+    if(id === undefined || id === null) {
+      return query_exec(
+        connection,
+        "insert into usuario (id_usuario, nome_usuario, curso, tipo_usuario, email_usuario, senha) values (?, ?, ?, ?, ?, ?)",
+        [nanoid(3), nome_usuario, curso, tipo_usuario, email_usuario, senha]
+      );
+    } else {{
+      return query_exec(
+        connection,
+        "insert into usuario (id_usuario, nome_usuario, curso, tipo_usuario, email_usuario, senha) values (?, ?, ?, ?, ?, ?)",
+        [id, nome_usuario, curso, tipo_usuario, email_usuario, senha]
+      );
+    }}
   },
 
   getAll() {

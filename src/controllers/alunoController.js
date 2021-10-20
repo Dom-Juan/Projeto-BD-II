@@ -71,7 +71,10 @@ module.exports = {
         return res.status(500).json({msg: "Usuário não existe!"});
       } else {
         const response = await alunoModel.delete(req.body.nome_aluno, req.body.ra_aluno);
-        const response2 = await usuarioModel.delete(usuario[0].nome_usuario, usuario[0].id_usuario)
+        const response2 = await usuarioModel.delete(usuario[0].nome_usuario, usuario[0].id_usuario);
+
+        console.log("Deletando aluno e seu usuario correspondete\n","[",req.body.ra_aluno, ",", req.body.nome_aluno,"]",response);
+        
         if(response.affectedRows != 0 && response2) return res.status(200).json({response});
         else if(response.affectedRows === 0) return res.status(500).json({msg: 'Aluno já foi deletado ou inexistente.'});
         else return res.status(500).json({response});

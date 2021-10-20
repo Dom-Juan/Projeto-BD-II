@@ -70,7 +70,10 @@ module.exports = {
         return res.status(500).json({msg: "Usuário não existe!"});
       } else {
         const response = await coordModel.delete(req.body.nome_coord, req.body.id_coord);
-        const response2 = await usuarioModel.delete(usuario[0].nome_usuario, usuario[0].id_usuario)
+        const response2 = await usuarioModel.delete(usuario[0].nome_usuario, usuario[0].id_usuario);
+
+        console.log("Deletando coordenador e seu usuario correspondete\n","[",req.body.id_coord, ",", req.body.nome_coord,"]",response);
+
         if(response.affectedRows != 0 && response2) return res.status(200).json({response});
         else if(response.affectedRows === 0) return res.status(500).json({msg: 'Aluno já foi deletado ou inexistente.'});
         else return res.status(500).json({response});
