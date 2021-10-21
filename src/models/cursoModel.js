@@ -5,7 +5,7 @@ module.exports = {
   insert({nome_curso, ano_curso, tipo_curso, coordenador_curso}) {
     return query_exec(
       connection,
-      "insert into curso (nome_curso, ano_curso, tipo_curso, coordenador_curso) values (?, ?, ?)",
+      "insert into curso (nome_curso, ano_curso, tipo_curso, coordenador_curso) values (?, ?, ?, ?)",
       [nome_curso, ano_curso, tipo_curso, coordenador_curso]
     );
   },
@@ -18,7 +18,14 @@ module.exports = {
     );
   },
 
-  getByCurso(nome_curso) {
+  getById(id_curso) {
+    return query_exec(connection,
+      "select * from curso where id_curso = ?",
+      [id_curso]
+    );
+  },
+
+  getByCursoNome(nome_curso) {
     return query_exec(connection,
       "select * from curso where nome_curso = ?",
       [nome_curso]

@@ -4,6 +4,7 @@ const query_exec = require('../helpers/query_exec');
 const nanoid = customAlphabet('1234567890ebc', 4);
 module.exports = {
   insert({
+    id_aluno_atividade,
     data_ini_atividade,
     data_fim_atividade,
     nome_atividade,
@@ -13,16 +14,29 @@ module.exports = {
     tipo_atividade,
     url_atividade,
     status_atividade
-  }) {
+  }, ra_aluno) {
+    console.log("Entrou no model Atividade\n", {
+      id_aluno_atividade,
+      data_ini_atividade,
+      data_fim_atividade,
+      nome_atividade,
+      ra_aluno,
+      tipo_curso_atividade,
+      horas_atividade,
+      tipo_atividade,
+      url_atividade,
+      status_atividade
+    });
     return query_exec(
       connection,
-      "insert into atividade_extra (id_atividade, data_ini_atividade, data_fim_atividade, nome_atividade, ra_aluno_atividade, tipo_curso_atividade, horas_atividade, tipo_atividade, url_atividade, status_atividade) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      "insert into atividade_extra (id_atividade, id_aluno_atividade, data_ini_atividade, data_fim_atividade, nome_atividade, ra_aluno_atividade, tipo_curso_atividade, horas_atividade, tipo_atividade, url_atividade, status_atividade) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
       [
         nanoid(4),
+        id_aluno_atividade,
         data_ini_atividade,
         data_fim_atividade,
         nome_atividade,
-        ra_aluno_atividade,
+        ra_aluno,
         tipo_curso_atividade,
         horas_atividade,
         tipo_atividade,

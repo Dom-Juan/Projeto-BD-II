@@ -2,11 +2,11 @@ const connection = require('../config/connection');
 const query_exec = require('../helpers/query_exec');
 
 module.exports = {
-  insert({nome_ent_acad, ano_abertura_acad, quant_alunos_acad, quant_horas_avaliar_acad}) {
+  insert({nome_ent_acad, ano_abertura_acad, curso_ent_acad, quant_alunos_acad, quant_horas_avaliar_acad}) {
     return query_exec(
       connection,
-      "insert into ent_academica (nome_ent_acad, ano_abertura_acad, quant_alunos_acad, quant_horas_avaliar_acad) values (?, ?, ?, ?)",
-      [nome_ent_acad, ano_abertura_acad, quant_alunos_acad, quant_horas_avaliar_acad]
+      "insert into ent_academica (nome_ent_acad, ano_abertura_acad, curso_ent_acad, quant_alunos_acad, quant_horas_avaliar_acad) values (?, ?, ?, ?, ?)",
+      [nome_ent_acad, ano_abertura_acad, curso_ent_acad, quant_alunos_acad, quant_horas_avaliar_acad]
     );
   },
 

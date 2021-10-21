@@ -19,7 +19,7 @@ module.exports = {
         if(aluno[0].tipo_usuario_aluno !== "coordenador") {
           console.log("Aluno que tem esse RA:", aluno);
     
-          const newAtividade = await atividadeModel.insert(req.body);
+          const newAtividade = await atividadeModel.insert(req.body, aluno[0].ra_aluno);
     
           return res.json({newAtividade});
         } else {

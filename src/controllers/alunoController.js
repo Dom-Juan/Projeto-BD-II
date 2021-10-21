@@ -45,7 +45,7 @@ module.exports = {
 
   async getById(req, res) {
     try {
-      const response = await alunoModel.getById(req.body.id_aluno);
+      const response = await alunoModel.getById(req.body.id_aluno_usuario);
       if(response) return res.status(200).json({response});
     } catch(error) {
       console.error(error);

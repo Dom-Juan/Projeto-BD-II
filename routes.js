@@ -7,6 +7,7 @@ const usuarioController = require('./src/controllers/usuarioController');
 const alunoController = require('./src/controllers/alunoController');
 const coordenadorController = require('./src/controllers/coordController');
 const atividadeController = require('./src/controllers/atividadeController');
+const cursoController = require('./src/controllers/cursoController');
 
 // Autoriza um usuário a fazer algumas requisições.
 const sessionMiddlware = require('./src/middleware/auth');
@@ -27,6 +28,13 @@ routes.delete('/aluno/delete' , alunoController.deleteAluno);
 routes.post('/coordenador/register', coordenadorController.insert);
 routes.get('/coordenadores/' , coordenadorController.index);
 routes.delete('/coordenador/delete' , coordenadorController.deleteCoordenador);
+
+// Rotas do controlador de cursos.
+routes.post('/curso/cadastrar', cursoController.insert);
+routes.get('/curso/all', cursoController.index);
+routes.get('/curso/id', cursoController.getById);
+routes.get('/curso/nome', cursoController.getByCursoNome);
+routes.delete('/curso/deletar' , cursoController.deleteCurso);
 
 // Rotas do controlador de atividades
 routes.post('/atividade/enviar', atividadeController.insert);
