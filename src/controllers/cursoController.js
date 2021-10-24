@@ -59,7 +59,7 @@ module.exports = {
 
   async getByCursoNome(req, res) {
     try {
-      const response = await cursoModel.getByCurso(req.body.nome_curso);
+      const response = await cursoModel.getByCursoNome(req.body.nome_curso);
       if (response) return res.status(200).json({ response });
     } catch (error) {
       console.error(error);

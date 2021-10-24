@@ -63,11 +63,10 @@ create table ent_academica(
 create table curso(
  id_curso integer(3) primary key auto_increment,
  nome_curso varchar(35),
- ano_curso varchar(20),
+ ano_curso date,
  tipo_curso varchar(20),
  coordenador_curso varchar(20),
- foreign key (coordenador_curso) references coordenador(nome_coord),
- foreign key (tipo_curso) references ent_academica(curso_ent_acad)
+ foreign key (coordenador_curso) references coordenador(nome_coord)
 );
 
 create table atividade_extra(
