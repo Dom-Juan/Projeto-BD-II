@@ -8,6 +8,8 @@ delete from aluno where ra_aluno = "171257111";
 	
 delete from usuario where id_usuario = 595;
 
+
+
 /*
  * Ordem de delete:
  * Aluno ou coordenador primeiro >> usuário.
@@ -55,23 +57,25 @@ create table coordenador(
 create table ent_academica(
  nome_ent_acad varchar(20),
  ano_abertura_acad varchar(20),
- curso_ent_acad varchar(20) primary key,
+ curso_ent_acad varchar(35),
  quant_alunos_acad varchar(20),
- quant_horas_avaliar_acad varchar(20)
+ quant_horas_avaliar_acad varchar(20),
+ primary key (curso_ent_acad),
+ foreign key (curso_ent_acad) references curso(nome_curso)
 );
 
 create table curso(
- id_curso integer(3) primary key auto_increment,
  nome_curso varchar(35),
  ano_curso date,
  tipo_curso varchar(20),
  coordenador_curso varchar(20),
+ primary key (nome_curso),
  foreign key (coordenador_curso) references coordenador(nome_coord)
 );
 
 create table atividade_extra(
  id_atividade varchar(4) not null,
- id_aluno_atividade integer(3) not null,
+ id_aluno_atividade integer(3),
  data_ini_atividade varchar(20),
  data_fim_atividade varchar(20),
  nome_atividade varchar(20),
@@ -81,6 +85,32 @@ create table atividade_extra(
  tipo_atividade varchar(35),
  url_atividade varchar(100),
  status_atividade varchar(20),
- primary key(id_aluno_atividade)
- /*foreign key (id_aluno_atividade) references aluno(id_aluno)*/
+ primary key(id_aluno_atividade),
+ foreign key (id_aluno_atividade) references aluno(id_aluno)
+);
+
+insert into atividade_extra (
+ id_atividade,
+ id_aluno_atividade,
+ data_ini_atividade,
+ data_fim_atividade,
+ nome_atividade,
+ ra_aluno_atividade,
+ tipo_curso_atividade,
+ horas_atividade,
+ tipo_atividade,
+ url_atividade,
+ status_atividade
+) values (
+ 'ad12',
+ 123,
+ '2021-10-1',
+ '2021-10-2',
+ 'Batata',
+ '17344343',
+ 'Computação',
+ '2horas',
+ 'andar',
+ 'a',
+ 'pendente'
 );

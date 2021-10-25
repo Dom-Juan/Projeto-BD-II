@@ -26,6 +26,22 @@ module.exports = {
     );
   },
 
+  getById(id_ent_acad) {
+    return query_exec(
+      connection,
+      "select * from ent_academica where id_ent_acad = ?",
+      [id_ent_acad]
+    );
+  },
+
+  getByCursoNome(curso_ent_acad) {
+    return query_exec(
+      connection,
+      "select * from ent_academica where curso_ent_acad = ?",
+      [curso_ent_acad]
+    );
+  },
+
   delete(nome_ent_acad, ano_abertura_acad) {
     try {
       return query_exec(
