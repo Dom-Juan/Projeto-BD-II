@@ -14,6 +14,8 @@ module.exports = {
     url_atividade,
     status_atividade
   }, id_aluno_atividade) {
+    let id_atividade = nanoid(4)
+    console.log("ID da atividade:", id_atividade);
     console.log("Entrou no model Atividade\n", {
       data_ini_atividade,
       data_fim_atividade,
@@ -29,7 +31,7 @@ module.exports = {
       connection,
       "insert into atividade_extra (id_atividade, id_aluno_atividade, data_ini_atividade, data_fim_atividade, nome_atividade, ra_aluno_atividade, tipo_curso_atividade, horas_atividade, tipo_atividade, url_atividade, status_atividade) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
       [
-        nanoid(4),
+        id_atividade,
         id_aluno_atividade,
         data_ini_atividade,
         data_fim_atividade,

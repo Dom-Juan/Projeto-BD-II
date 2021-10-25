@@ -85,8 +85,8 @@ create table atividade_extra(
  tipo_atividade varchar(35),
  url_atividade varchar(100),
  status_atividade varchar(20),
- primary key(id_aluno_atividade),
- foreign key (id_aluno_atividade) references aluno(id_aluno)
+ primary key(id_atividade),
+ foreign key (id_aluno_atividade) references aluno(id_aluno_usuario)
 );
 
 insert into atividade_extra (
