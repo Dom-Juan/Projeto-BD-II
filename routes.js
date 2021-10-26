@@ -9,6 +9,8 @@ const coordenadorController = require('./src/controllers/coordController');
 const atividadeController = require('./src/controllers/atividadeController');
 const cursoController = require('./src/controllers/cursoController');
 const entidadeAcadController = require('./src/controllers/entAcadController');
+
+// Controle de autenticação.
 const sessionController = require('./src/controllers/sessionController');
 
 // Autoriza um usuário a fazer algumas requisições.
