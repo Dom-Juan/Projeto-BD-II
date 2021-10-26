@@ -17,7 +17,7 @@ module.exports = {
         return res.json({msg: "Usuário não existe!"});
       } else {
         if(aluno[0].tipo_usuario_aluno !== "coordenador") {
-          console.log("Aluno que tem esse RA:", aluno);
+          console.table("Aluno que tem esse RA:", aluno);
     
           const newAtividade = await atividadeModel.insert(req.body, aluno[0].id_aluno_usuario);
     

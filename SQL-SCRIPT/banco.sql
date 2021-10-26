@@ -60,7 +60,7 @@ create table ent_academica(
  curso_ent_acad varchar(35),
  quant_alunos_acad varchar(20),
  quant_horas_avaliar_acad varchar(20),
- primary key (curso_ent_acad),
+ primary key (nome_ent_acad),
  foreign key (curso_ent_acad) references curso(nome_curso)
 );
 

@@ -13,12 +13,12 @@ module.exports = {
       }
 
       curso = await cursoModel.getByCursoNome(req.body.curso_ent_acad);
-      console.log(curso);
+      console.table(curso);
 
       if(curso[0] !== undefined && curso[0].nome_curso !== undefined  && curso.length != 0) {
-        const newEntidade = entAcademicaModel.insert(req.body);
+        const newEntidade = await entAcademicaModel.insert(req.body);
 
-        console.log(newEntidade);
+        console.table(newEntidade);
   
         return res.status(200).json({criado: newEntidade, msg:"Entidade criada!"});
       } else {

@@ -26,6 +26,14 @@ module.exports = {
     );
   },
 
+  getById(id_coord_usuario) {
+    return query_exec(
+      connection,
+      "select * from coordenador where id_coord_usuario = ?",
+      [id_coord_usuario]
+    );
+  },
+
   getByNome(nome_coord) {
     return query_exec(
       connection,

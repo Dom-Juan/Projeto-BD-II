@@ -17,8 +17,7 @@ module.exports = {
         return res.json({msg: "Usuário não existe!"});
       } else {
         if(usuario[0].tipo_usuario !== "coordenador") {
-          console.log("Usuário pego:", usuario);
-          console.log("Aluno a ser inserido:", usuario);
+          console.table(usuario);
     
           const newAluno = await alunoModel.insert(req.body, usuario[0].id_usuario);
     

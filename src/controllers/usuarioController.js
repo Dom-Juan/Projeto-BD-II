@@ -19,7 +19,7 @@ module.exports = {
 
       const newUser = await usuarioModel.insert(req.body, undefined);
 
-      console.log("Usuário a ser inserido:", newUser);
+      console.table(newUser);
 
       return res.json({newUser});
     } catch(error) {
@@ -32,10 +32,9 @@ module.exports = {
     let aluno = await alunoModel.getByRa(req.body.ra_aluno);
     let user = await usuarioModel.getByEmail(req.body.email_usuario);
     
-    console.log(req.body);
+    console.table(req.body);
     
     try{
-      console.log(req.body);
 
       if(aluno.length != 0) {
         return res.json({msg:"Este usuário já existe!"});
@@ -104,7 +103,7 @@ module.exports = {
 
   async deleteUsuario(req, res) {
     try {
-      const response = await alunoModel.delete(req.body.nome_aluno, req.body.ra_aluno);
+      const response = await usuarioModel.delete(req.body.nome_usuario, req.body.id_usuario);
       console.log(response);
       if(response.affectedRows != 0) return res.status(200).json({response});
       else return res.status(500).json({msg: 'Aluno já foi deletado ou inexistente.'});

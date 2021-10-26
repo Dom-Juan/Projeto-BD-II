@@ -14,8 +14,7 @@ module.exports = {
 
       coord = await coordModel.getByNome(req.body.coordenador_curso);
       if (coord[0].id_coord_usuario !== undefined) {
-        console.log("Usuário pego: ", coord);
-        console.log("ID úsuário:", coord[0].id_coord_usuario);
+        console.table(coord);
 
         if (coord.length === 0) {
           return res.status(500).json({ msg: "Usuário não existe!" });

@@ -14,8 +14,7 @@ module.exports = {
 
       usuario = await usuarioModel.getById(req.body.id_usuario);
       if (usuario[0].id_usuario !== undefined) {
-        console.log("Usuário pego: ", usuario);
-        console.log("ID úsuário:", usuario[0].id_usuario);
+        console.table(usuario);
 
         if (usuario.length === 0) {
           return res.status(500).json({ msg: "Usuário não existe!" });
