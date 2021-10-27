@@ -1,6 +1,26 @@
-// Import do router pra as rotas de requisição do server.
+// Geração de ids de atividade.
+const { customAlphabet } = require('nanoid');
+const nanoid = customAlphabet('abc1234567890ebc', 7);
+
+// Import de bibliotecas para serem usadas na rota.
 const { Router } = require('express');
+const multer  = require('multer');
 const routes = Router();
+
+// pegando a data atual.
+let data = new Date();
+
+// Criando o local aonde será adicionado os arquivos.
+let storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, './uploads/')
+  },
+  filename: function (req, file, cb) {
+    cb(null,  nanoid(7)+"_"+data.getFullYear()+"_"+(data.getMonth()+1)+"_"+data.getDate()+file.originalname);
+  }
+});
+// cria a função de upload.
+const upload = multer({ storage: storage });
 
 // Controladores que pedem e usam modelos do banco de dados.
 const usuarioController = require('./src/controllers/usuarioController');
@@ -39,12 +59,12 @@ routes.delete('/coordenador/delete' , coordenadorController.deleteCoordenador);
 // Rotas do controlador de cursos.
 routes.post('/curso/cadastrar', cursoController.insert);
 routes.get('/curso/todos', cursoController.index);
-routes.get('/curso/id', cursoController.getById);
+//routes.get('/curso/id', cursoController.getById);
 routes.get('/curso/nome', cursoController.getByCursoNome);
 routes.delete('/curso/deletar' , cursoController.deleteCurso);
 
 // Rotas do controlador de atividades.
-routes.post('/atividade/enviar', atividadeController.insert);
+routes.post('/atividade/enviar', upload.single('comprovante'), atividadeController.insert);
 routes.get('/atividade/todas', atividadeController.index);
 routes.get('/atividade/id', atividadeController.getById);
 routes.get('/atividade/curso', atividadeController.getByCurso);

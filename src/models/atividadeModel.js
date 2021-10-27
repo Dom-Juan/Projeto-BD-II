@@ -11,11 +11,9 @@ module.exports = {
     tipo_curso_atividade,
     horas_atividade,
     tipo_atividade,
-    url_atividade,
-    status_atividade
-  }, id_aluno_atividade) {
+  }, id_aluno_atividade,  url_atividade, status_atividade) {
     let id_atividade = nanoid(4)
-    console.log("ID da atividade:", id_atividade);
+    console.log("ID da atividade:", status_atividade);
     console.log("Entrou no model Atividade\n", {
       data_ini_atividade,
       data_fim_atividade,
@@ -51,6 +49,13 @@ module.exports = {
       connection,
       "select * from atividade_extra",
       []
+    );
+  },
+
+  getByNome(nome_atividade) {
+    return query_exec(connection,
+      "select * from atividade_extra where nome_atividade = ?",
+      [nome_atividade]
     );
   },
 

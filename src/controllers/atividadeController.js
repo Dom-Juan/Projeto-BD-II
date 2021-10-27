@@ -3,12 +3,14 @@ const atividadeModel = require('../models/atividadeModel');
 const alunoModel = require('../models/alunoModel');
 
 module.exports = {
-  async insert(req, res) {
+  async insert(req, res, next) {
+    console.log(req.file, req.body);
+    console.log(req.body.ra_aluno_atividade);
     try {
-      const atividade = await atividadeModel.getById(req.body.id_atividade);
-
+      const atividade = await atividadeModel.getByNome(req.body.nome_atividade);
+      
       if(atividade.length != 0) {
-        return res.json({msg:"Esta atividade com este ID já existe!"});
+        return res.json({msg:"Esta atividade com este nome já existe!"});
       }
 
       let aluno = await alunoModel.getByRa(req.body.ra_aluno_atividade);
@@ -19,7 +21,10 @@ module.exports = {
         if(aluno[0].tipo_usuario_aluno !== "coordenador") {
           console.table("Aluno que tem esse RA:", aluno);
     
-          const newAtividade = await atividadeModel.insert(req.body, aluno[0].id_aluno_usuario);
+          let url_atividade = req.file.path;
+          let status_atividade = "pendente";
+
+          const newAtividade = await atividadeModel.insert(req.body, aluno[0].id_aluno_usuario, url_atividade, status_atividade);
     
           return res.json({newAtividade});
         } else {

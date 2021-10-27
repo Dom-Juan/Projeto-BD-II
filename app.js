@@ -9,6 +9,7 @@ class App {
     this.server = express();
     this.middleware();
     this.routes();
+    this.error();
   }
 
   middleware() {
@@ -18,6 +19,15 @@ class App {
 
   routes() {
     this.server.use(routes);
+  }
+
+  error() {
+    this.server.use((err, req, res, next) => {
+      res.locals.error = err;
+      const status = err.status || 500;
+      res.status(status);
+      res.render('error');
+    });
   }
 }
 
