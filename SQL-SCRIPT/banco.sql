@@ -1,25 +1,6 @@
 use cacic_vhou_;
 
-select nome_aluno from aluno where nome_aluno = "a_teste" and ra_aluno = "171257180" union select null where not exists (select * from aluno where nome_aluno = "a_teste" and ra_aluno = "171257180");
-
-delete from coordenador where nome_coord = "juan";
-
-delete from aluno where ra_aluno = "171257111";
-	
-delete from usuario where id_usuario = 595;
-
-
-
-/*
- * Ordem de delete:
- * Aluno ou coordenador primeiro >> usuário.
- * curso >> ent_academica.
- * atividade_extra 
- *
- *   
- */
-
-
+/* Criando o bando de dados */
 create table usuario(
  id_usuario integer(3) not null primary key,
  nome_usuario varchar(20),
@@ -89,6 +70,74 @@ create table atividade_extra(
  foreign key (id_aluno_atividade) references aluno(id_aluno_usuario)
 );
 
+/* SQL Banco de dados: */
+
+/*
+ * Ordem de delete:
+ * 		Deletando usuário: Aluno ou coordenador primeiro >> usuário.
+ * 		Deletando entidades academicas (direto).
+ * 		Deletando atividades extras (direto). 
+ *
+ *   
+ */
+
+/* SQL Usuario */
+insert into usuario (
+ id_usuario, 
+ nome_usuario, 
+ curso, 
+ tipo_usuario, 
+ email_usuario, 
+ senha
+) values (
+ 555, 
+ 'e', 
+ 'Computação', 
+ 'aluno', 
+ 'e@email.com', 
+ 'abc123'
+);
+
+delete from usuario where id_usuario = 555;
+/* FIM SQL Usuario */
+
+/* SQL Aluno */
+insert into aluno values (
+ 181,
+ default,
+ '171257111',
+ 'teste_',
+ 'CACIC',
+ '1998-01-20',
+ 'Computação',
+ 'aluno',
+ 'bacharelado'
+);
+
+delete from aluno where id_aluno_usuario = 181;
+/* FIM SQL Aluno */
+
+/* SQL Coordenador */
+insert into coordenador (
+ id_coord_usuario, 
+ nome_coord, 
+ nome_ent_acad_coord, 
+ tipo_usuario_coord, 
+ curso_coord,
+ data_como_coord
+) values (
+ 181,
+ 'teste_',
+ 'CACIC',
+ 'coordenador',
+ 'Computação',
+ '2021-10-28'
+);
+
+delete from coordenador where id_coord_usuario = 181;
+/* FIM SQL Coordenador */
+
+/* SQL Atividade Extra */
 insert into atividade_extra (
  id_atividade,
  id_aluno_atividade,
@@ -114,3 +163,65 @@ insert into atividade_extra (
  'a',
  'pendente'
 );
+
+delete from atividade_extra where id_atividade = 1896;
+/* FIM SQL Atividade Extra */
+
+/* SQL Curso */
+
+/* FIM SQL Curso */
+
+/* Triggers */
+delimiter $$
+
+create trigger depois_de_inserir_usuario
+ after insert 
+ on usuario for each row
+begin
+	call _criar_log_('Query feita');
+	call _verifica_casos_null_(0, 100, 'nome_usuario', 'usuario');
+end $$
+
+delimiter ;
+
+/* FIM Triggers */
+
+
+/* Procedures */
+
+delimiter $$
+
+create procedure `_verifica_casos_null_`(
+ inicio int,
+ fim int,
+ atributo1 varchar(20),
+ tabela varchar(20)
+)
+begin
+	while inicio <= fim DO
+		set inicio = inicio + 1;
+		select * from tabela where atributo1 = null;
+	end while;
+end$$
+
+delimiter ;
+
+delimiter $$
+ create procedure `_criar_log_`(msg varchar(100))
+  begin
+	declare cmd varchar(2000);
+	select cast(current_timestamp() as char(10)) into @hoje;
+	set cmd = concat(msg ,'>>',@hoje);
+	select cmd into outfile 'D:\log.txt';
+  end;
+delimiter ;
+
+/* FIM Procedures */
+
+call _criar_log_('teste') ;
+
+Drop procedure _criar_log_; 
+Drop procedure _verifica_casos_null_;
+drop trigger depois_de_inserir_usuario;
+
+/* FIM SQL Banco de Dados. */
