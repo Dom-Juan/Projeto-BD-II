@@ -29,6 +29,7 @@ const coordenadorController = require('./src/controllers/coordController');
 const atividadeController = require('./src/controllers/atividadeController');
 const cursoController = require('./src/controllers/cursoController');
 const entidadeAcadController = require('./src/controllers/entAcadController');
+const horasController = require('./src/controllers/horasController');
 
 // Controle de autenticação.
 const sessionController = require('./src/controllers/sessionController');
@@ -69,6 +70,14 @@ routes.get('/atividade/todas', atividadeController.index);
 routes.get('/atividade/id', atividadeController.getById);
 routes.get('/atividade/curso', atividadeController.getByCurso);
 routes.delete('/atividade/deletar' , atividadeController.deleteAtividade);
+
+// Rotas do controlador de horas complementares.
+routes.post('/horas/cadastrar', horasController.insert);
+routes.get('/horas/todas', horasController.index);
+routes.get('/horas/id', horasController.getById);
+routes.get('/horas/nome', horasController.getByNome);
+routes.get('/horas/curso', horasController.getByCurso);
+routes.delete('/horas/deletar' , horasController.deleteHora);
 
 // Rotas do controlador de entidade academias.
 routes.post('/entidade/cadastrar', entidadeAcadController.insert);

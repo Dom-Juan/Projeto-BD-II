@@ -4,8 +4,8 @@ const alunoModel = require('../models/alunoModel');
 
 module.exports = {
   async insert(req, res, next) {
-    console.log(req.file, req.body);
-    console.log(req.body.ra_aluno_atividade);
+    //console.log(req.file, req.body);
+    //console.log(req.body.ra_aluno_atividade);
     try {
       const atividade = await atividadeModel.getByNome(req.body.nome_atividade);
       
