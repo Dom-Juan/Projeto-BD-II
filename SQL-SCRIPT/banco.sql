@@ -1,12 +1,14 @@
 use cacic_vhou_;
 
+alter table usuario modify email_usuario varchar(255);
+
 /* Criando o bando de dados */
 create table usuario(
  id_usuario integer(3) not null primary key,
  nome_usuario varchar(20),
  curso varchar(20),
  tipo_usuario varchar(20),
- email_usuario varchar(20),
+ email_usuario varchar(255),
  senha varchar(20)
 );
 
