@@ -20,7 +20,7 @@ module.exports = {
           return res.status(500).json({ msg: "Usuário não existe!" });
         } else {
           if (coord[0].tipo_usuario_coord === "coordenador") {
-            const newCurso = await cursoModel.insert(req.body);
+            const newCurso = await cursoModel.insert(req.body, req.body.nome_responsavel);
             console.log("Curso a ser inserido:", newCurso);
             return res.json({ newCurso });
           } else {
@@ -68,7 +68,13 @@ module.exports = {
 
   async deleteCurso(req, res) {
     try {
-      
+      console.log(req.body);
+      const seek = await cursoModel.getByCursoNome(req.body.nome_curso);
+      if(seek.length === 0){
+        return res.status(500).json({ msg: "500: Curso não existe no banco!!" });
+      }
+      const response = await cursoModel.delete(req.body.nome_curso, req.body.nome_responsavel);
+      if (response) return res.status(200).json({ response });
     } catch (error) {
       console.error(error);
       return res.status(error.code).json({ msg: error.code + error.message });

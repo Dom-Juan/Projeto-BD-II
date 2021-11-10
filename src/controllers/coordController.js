@@ -5,6 +5,7 @@ const coordModel = require('../models/coordModel');
 module.exports = {
   async insert(req, res) {
     let usuario = undefined;
+    let nome_responsavel = req.body.nome_responsavel;
     try {
       const coordenador = await coordModel.getByNome(req.body.nome_coord);
 
@@ -20,7 +21,7 @@ module.exports = {
           return res.status(500).json({ msg: "Usuário não existe!" });
         } else {
           if (usuario[0].tipo_usuario === "coordenador") {
-            const newCoordenador = await coordModel.insert(req.body, usuario[0].id_usuario);
+            const newCoordenador = await coordModel.insert(req.body, usuario[0].id_usuario, nome_responsavel);
             console.log("Coordenador a ser inserido:", newCoordenador);
             return res.json({ newCoordenador });
           } else {
@@ -68,17 +69,19 @@ module.exports = {
 
   async deleteCoordenador(req, res) {
     try {
-      let usuario = await usuarioModel.getById(req.body.id_usuario);
-      if (usuario.length === 0) {
-        return res.status(500).json({ msg: "Usuário não existe!" });
+      let nome_responsavel = req.body.nome_responsavel;
+      console.log("Dono da ação: ", nome_responsavel);
+      let usuario = await usuarioModel.getById(req.body.id_coord_usuario);
+      let coordTeste = await coordModel.getById(req.body.id_coord_usuario);
+      if (usuario.length === 0 && coordTeste === 0) {
+        return res.status(500).json({ msg: "Usuário não existe! ou já foi deletado" });
       } else {
-        const response = await coordModel.delete(req.body.nome_coord, req.body.id_coord_usuario);
-        const response2 = await usuarioModel.delete(usuario[0].nome_usuario, usuario[0].id_usuario);
+        const response = await coordModel.delete(req.body.id_coord_usuario, req.body.nome_coord, nome_responsavel);
 
-        console.log("Deletando coordenador e seu usuario correspondete\n", "[", req.body.id_coord, ",", req.body.nome_coord, "]", response);
+        console.log("Deletando coordenador e seu usuario correspondete\n", "[", req.body.id_coord_usuario, ",", req.body.nome_coord, "]", response);
 
-        if (response.affectedRows != 0 && response2) return res.status(200).json({ response });
-        else if (response.affectedRows === 0) return res.status(500).json({ msg: 'Aluno já foi deletado ou inexistente.' });
+        if (response.affectedRows != 0) return res.status(200).json({ response });
+        else if (response.affectedRows === 0) return res.status(500).json({ msg: 'Coordenador já foi deletado ou inexistente.' });
         else return res.status(500).json({ response });
       }
     } catch (error) {

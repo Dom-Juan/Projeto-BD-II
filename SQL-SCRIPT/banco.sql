@@ -1,25 +1,46 @@
 use cacic_vhou_;
 
 alter table usuario modify email_usuario varchar(255);
+alter table usuario modify nome_usuario varchar(50);
+alter table usuario modify curso varchar(50);
+alter table usuario modify senha varchar(25);
+
+alter table aluno modify nome_aluno varchar(50);
+alter table aluno modify nome_ent_acad_aluno varchar(50);
+alter table aluno modify curso_aluno varchar(50);
+
+alter table coordenador modify nome_coord varchar(50);
+alter table coordenador modify nome_ent_acad_coord varchar(50);
+alter table coordenador modify curso_coord varchar(50);
+
+alter table curso modify nome_curso varchar(50);
+alter table curso modify coordenador_curso varchar(50);
+
+alter table ent_academica modify nome_ent_acad varchar(50);
+alter table ent_academica  modify curso_ent_acad varchar(50);
+
+alter table atividade_extra modify nome_atividade varchar(50);
+
+alter table tb_auditoria  modify nome_usuario_responsavel varchar(50);
 
 /* Criando o bando de dados */
 create table usuario(
  id_usuario integer(3) not null primary key,
- nome_usuario varchar(20),
- curso varchar(20),
+ nome_usuario varchar(50),
+ curso varchar(50),
  tipo_usuario varchar(20),
  email_usuario varchar(255),
- senha varchar(20)
+ senha varchar(25)
 );
 
 create table aluno(
  id_aluno_usuario integer(3) not null,
  id_aluno integer(3) not null auto_increment,
  ra_aluno varchar(20) not null,
- nome_aluno varchar(20) not null,
- nome_ent_acad_aluno varchar(20) not null,
+ nome_aluno varchar(50) not null,
+ nome_ent_acad_aluno varchar(50) not null,
  ano_nascimento_aluno date,
- curso_aluno varchar(20) not null,
+ curso_aluno varchar(50) not null,
  tipo_usuario_aluno varchar(20),
  tipo_grad_aluno varchar(25),
  primary key (id_aluno),
@@ -28,19 +49,19 @@ create table aluno(
 
 create table coordenador(
  id_coord_usuario integer(3) not null,
- nome_coord varchar(20),
- nome_ent_acad_coord varchar(20),
+ nome_coord varchar(50),
+ nome_ent_acad_coord varchar(50),
  tipo_usuario_coord varchar(20),
- curso_coord varchar(20),
+ curso_coord varchar(50),
  data_como_coord date,
  primary key (nome_coord),
  foreign key (id_coord_usuario) references usuario(id_usuario)
 );
 
 create table ent_academica(
- nome_ent_acad varchar(20),
+ nome_ent_acad varchar(50),
  ano_abertura_acad varchar(20),
- curso_ent_acad varchar(35),
+ curso_ent_acad varchar(50),
  quant_alunos_acad varchar(20),
  quant_horas_avaliar_acad varchar(20),
  primary key (nome_ent_acad),
@@ -48,10 +69,10 @@ create table ent_academica(
 );
 
 create table curso(
- nome_curso varchar(35),
+ nome_curso varchar(50),
  ano_curso date,
  tipo_curso varchar(20),
- coordenador_curso varchar(20),
+ coordenador_curso varchar(50),
  primary key (nome_curso),
  foreign key (coordenador_curso) references coordenador(nome_coord)
 );
@@ -61,7 +82,7 @@ create table atividade_extra(
  id_aluno_atividade integer(3),
  data_ini_atividade varchar(20),
  data_fim_atividade varchar(20),
- nome_atividade varchar(20),
+ nome_atividade varchar(50),
  ra_aluno_atividade varchar(20) not null,
  tipo_curso_atividade varchar(20),
  horas_atividade varchar(20),
@@ -85,7 +106,7 @@ create table horas_complementares (
 
 create table tb_auditoria (
  id_ int(3) not null auto_increment,
- nome_tabela varchar(20) not null,
+ nome_tabela varchar(50) not null,
  data_alterado date not null,
  sql_usado varchar(8000),
  nome_usuario_responsavel varchar(20),
@@ -112,11 +133,11 @@ insert into usuario (
  email_usuario, 
  senha
 ) values (
- 555, 
- 'e', 
+ 321, 
+ 'Coord teste', 
  'Computação', 
- 'aluno', 
- 'e@email.com', 
+ 'coordenador', 
+ 'coord_teste@email.com', 
  'abc123'
 );
 
@@ -373,7 +394,7 @@ create procedure `inserir_horas_tabela`(
  limite_ varchar(20),
  procentagem_ int,
  nome_curso_ varchar(20),
- nome_r varchar(20)
+ nome_r varchar(50)
 )
 begin
  /* Selecionando a data da execução da query */
@@ -416,7 +437,7 @@ delimiter $$
 create procedure `deletar_horas_tabela`(
  id_ int(3),
  nome_ varchar(20),
- nome_responsavel varchar(20)
+ nome_responsavel varchar(50)
 )
 begin
  /* Selecionando a data da execução da query */
@@ -440,8 +461,91 @@ begin
 end$$
 delimiter ;
 
+/* Procedure de inserção de curso. */
+delimiter $$
+create procedure `inserir_curso_tabela`(
+ nome_ varchar(50),
+ ano_ date,
+ tipo_ varchar(20),
+ coordenador_ varchar(20),
+ nome_responsavel varchar(50)
+)
+begin
+ /* Selecionando a data da execução da query */
+ select cast(current_timestamp() as varchar(50)) into @agora;
+
+ insert into curso (nome_curso, ano_curso, tipo_curso, coordenador_curso) values (nome_, ano_, tipo_, coordenador_);
+ insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel)
+  values
+ (default, 'curso', @agora, 'insert into curso (nome_curso, ano_curso, tipo_curso, coordenador_curso) values (nome_, ano_, tipo_, coordenador_);', nome_responsavel);
+end;
 delimiter ;
 
+/* Procedure de deletar uma coluna de curso. */
+delimiter $$
+create procedure `deletar_curso_tabela`(nome_curso_a_ser_deletado varchar(50), nome_responsavel varchar(50))
+begin
+ /* Selecionando a data da execução da query */
+ select cast(current_timestamp() as varchar(50)) into @agora;
+
+ delete from curso where curso.nome_curso = nome_curso_a_ser_deletado;
+
+ insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel)
+  values 
+ (default, 'curso', @agora, 'delete from curso where nome_curso = nome_;', nome_responsavel);
+end;
+delimiter ;
+
+/* Procedure de inserção na tabela coordenador */
+delimiter $$
+create procedure `ìnserir_coord_tabela`(
+ id_ int(3),
+ nome_ varchar(50),
+ nome_ent_acad_ varchar(50),
+ tipo_usuario_ varchar(20),
+ curso_ varchar(20),
+ data_como_coord date,
+ nome_responsavel varchar(50)
+)
+begin
+ select cast(current_timestamp() as varchar(50)) into @agora;
+ insert into coordenador (id_coord_usuario, nome_coord, nome_ent_acad_coord, tipo_usuario_coord, curso_coord, data_como_coord)
+  values
+ (id_, nome_, nome_ent_acad_, tipo_usuario_, curso_, data_como_coord);
+ insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) 
+  values 
+ (
+  default,
+  'coordenador',
+  @agora, 
+  'insert into coordenador (id_coord_usuario, nome_coord, nome_ent_acad_coord, tipo_usuario_coord, curso_coord, data_como_coord) values (id_, nome_, nome_ent_acad_, tipo_usuario_, curso_, data_como_coord);',
+  nome_responsavel
+ );
+end;
+
+/* Procedure de deletar uma linha na tabela coordenador */
+delimiter ;
+
+delimiter $$
+create procedure `deletar_coord_tabela`(id_ int(3), nome_ varchar(50), nome_responsavel varchar(50))
+begin
+ delete from coordenador where id_coord_usuario = id_;
+ delete from usuario where usuario.nome_usuario = nome_ and usuario.id_usuario = id_; 
+ insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) 
+  values 
+ (
+  default,
+  'coordenador',
+  @agora, 
+  'delete from coordenador where id_coord_usuario = id_; delete from usuario where usuario.nome_usuario = nome_ and usuario.id_usuario = id_;',
+  nome_responsavel
+ );
+end;
+delimiter ;
+
+drop procedure deletar_coord_tabela;
+
+/* Pode ser chamada quando for detectado alteração */
 delimiter $$
  create procedure `_criar_log_`(msg varchar(100))
   begin
@@ -453,8 +557,16 @@ delimiter $$
   end;
 delimiter ;
 
+/* Testando as procedures */
 call inserir_horas_tabela('1', 'Monitoria', '2', '10 horas', '10', 'Computação', 'juan');
 call deletar_horas_tabela('467', 'Curso Online', 'juan');
+
+call inserir_curso_tabela('Curso teste', '1981-10-10', 'mat1010', 'juan', 'juan');
+call deletar_curso_tabela('Computação2', 'juan');
+
+call ìnserir_coord_tabela('321', 'Coordenador Teste', 'Sem entidade', 'coordenador', 'Computação', '2021-10-11', 'juan');
+
+call deletar_coord_tabela('321', 'Coord teste', 'juan'); 
 
 /* FIM Procedures */
 
@@ -465,8 +577,10 @@ call deletar_ativ_extra_null();
 /* FIM Call de procedures */
 
 /* Drop de procedures */
+
 /* Inserindo colunas */
 drop procedure inserir_horas_tabela;
+drop procedure inserir_curso_tabela;
 
 /* Deletando colunas null */
 drop procedure deletar_usuario_null;
@@ -478,6 +592,8 @@ drop procedure deletar_ativ_extra_null;
 
 /* Deletando colunas */
 drop procedure deletar_horas_tabela;
+drop procedure deletar_curso_tabela; 
+drop procedure deletar_coord_tabela;
 
 drop procedure _criar_log_; 
 drop procedure _verifica_casos_null_;

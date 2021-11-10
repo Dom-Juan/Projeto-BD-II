@@ -2,11 +2,11 @@ const connection = require('../config/connection');
 const query_exec = require('../helpers/query_exec');
 
 module.exports = {
-  insert({nome_curso, ano_curso, tipo_curso, coordenador_curso}) {
+  insert({nome_curso, ano_curso, tipo_curso, coordenador_curso}, nome_responsavel) {
     return query_exec(
       connection,
-      "insert into curso (nome_curso, ano_curso, tipo_curso, coordenador_curso) values (?, ?, ?, ?)",
-      [nome_curso, ano_curso, tipo_curso, coordenador_curso]
+      "call inserir_curso_tabela(?, ?, ?, ?, ?)",
+      [nome_curso, ano_curso, tipo_curso, coordenador_curso, nome_responsavel]
     );
   },
 
@@ -40,12 +40,13 @@ module.exports = {
     );
   },
 
-  delete(nome_curso, tipo_curso) {
+  delete(nome_curso, nome_responsavel) {
     try {
+      console.log(nome_responsavel);
       return query_exec(
         connection,
-        'delete from curso where nome_curso = ? and tipo_curso = ?',
-        [nome_curso, tipo_curso]);
+        'call deletar_curso_tabela(?, ?)',
+        [nome_curso, nome_responsavel]);
     } catch(e) {
       console.error(e);
       throw e;

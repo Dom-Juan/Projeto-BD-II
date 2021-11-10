@@ -2,12 +2,12 @@ const connection = require('../config/connection');
 const query_exec = require('../helpers/query_exec');
 
 module.exports = {
-  insert({nome_coord, nome_ent_acad_coord, tipo_usuario_coord, curso_coord, data_como_coord}, id_coord_usuario) {
+  insert({nome_coord, nome_ent_acad_coord, tipo_usuario_coord, curso_coord, data_como_coord}, id_coord_usuario, nome_responsavel) {
     console.log("Id gerado: ", id_coord_usuario);
     return query_exec(
       connection,
-      "insert into coordenador (id_coord_usuario, nome_coord, nome_ent_acad_coord, tipo_usuario_coord, curso_coord, data_como_coord) values (?, ?, ?, ?, ?, ?)",
-      [id_coord_usuario, nome_coord, nome_ent_acad_coord, tipo_usuario_coord, curso_coord, data_como_coord]
+      "call ìnserir_coord_tabela(?, ?, ?, ?, ?, ?, ?);",
+      [id_coord_usuario, nome_coord, nome_ent_acad_coord, tipo_usuario_coord, curso_coord, data_como_coord, nome_responsavel]
     );
   },
 
@@ -42,12 +42,12 @@ module.exports = {
     );
   },
 
-  delete(nome_coord, id_coord_usuario) {
+  delete(id_coord_usuario, nome_coord, nome_responsavel) {
     try {
       return query_exec(
         connection,
-        'delete from coordenador where id_coord_usuario = ? and nome_coord = ?',
-        [id_coord_usuario, nome_coord]);
+        'call deletar_coord_tabela(?, ?, ?)',
+        [id_coord_usuario, nome_coord, nome_responsavel]);
     } catch(e) {
       console.error(e);
       throw e;
