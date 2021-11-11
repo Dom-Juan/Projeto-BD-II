@@ -1,5 +1,6 @@
 use cacic_vhou_;
 
+/* Alterações feitas nas tabelas. */
 alter table usuario modify email_usuario varchar(255);
 alter table usuario modify nome_usuario varchar(50);
 alter table usuario modify curso varchar(50);
@@ -22,6 +23,7 @@ alter table ent_academica  modify curso_ent_acad varchar(50);
 alter table atividade_extra modify nome_atividade varchar(50);
 
 alter table tb_auditoria  modify nome_usuario_responsavel varchar(50);
+/* FIM Alterações feitas nas tabelas. */
 
 /* Criando o bando de dados */
 create table usuario(
@@ -217,175 +219,20 @@ delete from atividade_extra where id_atividade = 1896;
 /* FIM SQL Curso */
 
 /* Triggers */
-delimiter //
-create trigger depois_de_inserir_usuario
- after insert 
- on usuario for each row
+delimiter $$
+create trigger atualiza_nome_coord after update on coordenador
+for each row
 begin
-	insert 
-	call _criar_log_('Query feita');
-	call _verifica_casos_null_(0, 100, 'nome_usuario', 'usuario');
-end $$
-delimiter //
+ update curso set coordenador_curso = new.curso.coordenador_curso where coordenador_curso = old.curso.coordenador_curso;  
+end;
+delimiter ;
+
 
 /* FIM Triggers */
 
 
 /* Procedures */
-
-delimiter $$
-create procedure `deletar_usuario_null`(
- nome_usuario varchar(20)
-)
-begin
- /* Selecionando a data da execução da query */
- select cast(current_timestamp() as varchar(50)) into @agora;
- /* Realizando querys */
- delete from usuario where id_usuario = null;
- delete from usuario where nome_usuario = null;
- delete from usuario where curso = null;
- delete from usuario where tipo_usuario = null;
- delete from usuario where email_usuario = null;
- delete from usuario where senha = null;
- /* Registrando a alteração. */
- insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'usuario', @agora, 'delete from usuario where id_usuario = null', nome_usuario);
- insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'usuario', @agora, 'delete from usuario where nome_usuario = null;', nome_usuario);
- insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'usuario', @agora, 'delete from usuario where curso = null;', nome_usuario);
- insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'usuario', @agora, 'delete from usuario where tipo_usuario = null;', nome_usuario);
- insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'usuario', @agora, 'delete from usuario where email_usuario = null;', nome_usuario);
- insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'usuario', @agora, 'delete from usuario where senha = null;', nome_usuario);
-end$$
-delimiter ;
-
-delimiter $$
-create procedure `deletar_aluno_null`(
- nome_usuario varchar(20)
-)
-begin
- /* Selecionando a data da execução da query */
- select cast(current_timestamp() as varchar(50)) into @agora;
- /* Realizando querys */
- delete from aluno where id_aluno_usuario = null;
- delete from aluno where id_aluno = null;
- delete from aluno where ra_aluno = null;
- delete from aluno where nome_aluno = null;
- delete from aluno where nome_ent_acad_aluno = null;
- delete from aluno where ano_nascimento_aluno = null;
- delete from aluno where curso_aluno = null;
- delete from aluno where tipo_usuario_aluno = null;
- delete from aluno where tipo_grad_aluno = null;
- /* Registrando a alteração. */
- insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'aluno', @agora, 'delete from aluno where id_aluno_usuario = null;', nome_usuario);
- insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'aluno', @agora, 'delete from aluno where id_aluno = null;', nome_usuario);
- insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'aluno', @agora, 'delete from aluno where ra_aluno = null;', nome_usuario);
- insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'aluno', @agora, 'delete from aluno where nome_aluno = null;', nome_usuario);
- insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'aluno', @agora, 'delete from aluno where nome_ent_acad_aluno = null;', nome_usuario);
- insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'aluno', @agora, 'delete from aluno where curso_aluno = null;', nome_usuario);
- insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'aluno', @agora, 'delete from aluno where tipo_usuario_aluno = null;', nome_usuario);
- insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'aluno', @agora, 'delete from aluno where tipo_grad_aluno = null;', nome_usuario);
-end$$
-delimiter ;
-
-delimiter $$
-create procedure `deletar_coord_null`(
- nome_usuario varchar(20)
-)
-begin
- /* Selecionando a data da execução da query */
- select cast(current_timestamp() as varchar(50)) into @agora;
- /* Realizando querys */
- delete from coordenador where id_coord_usuario = null;
- delete from coordenador where nome_coord = null;
- delete from coordenador where nome_ent_acad_coord = null;
- delete from coordenador where tipo_usuario_coord = null;
- delete from coordenador where curso_coord = null;
- delete from coordenador where data_como_coord = null;
- /* Registrando a alteração. */
- insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'coordenador', @agora, 'delete from coordenador where id_coord_usuario = null;', nome_usuario);
- insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'coordenador', @agora, 'delete from coordenador where nome_coord = null;', nome_usuario);
- insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'coordenador', @agora, 'delete from coordenador where nome_ent_acad_coord = null;', nome_usuario);
- insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'coordenador', @agora, 'delete from coordenador where tipo_usuario_coord = null;', nome_usuario);
- insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'coordenador', @agora, 'delete from coordenador where curso_coord = null;', nome_usuario);
- insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'coordenador', @agora, 'delete from coordenador where data_como_coord = null;', nome_usuario);
-end$$
-delimiter ;
-
-delimiter $$
-create procedure `deletar_curso_null`(
- nome_usuario varchar(20)
-)
-begin
- /* Selecionando a data da execução da query */
- select cast(current_timestamp() as varchar(50)) into @agora;
- /* Realizando querys */
- delete from curso where nome_curso = null;
- delete from curso where ano_curso = null;
- delete from curso where tipo_curso = null;
- delete from curso where coordenador_curso = null;
- /* Registrando a alteração. */
- insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'curso', @agora, 'delete from curso where nome_curso = null;', nome_usuario);
- insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'curso', @agora, 'delete from curso where ano_curso = null;', nome_usuario);
- insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'curso', @agora, 'delete from curso where tipo_curso = null;', nome_usuario);
- insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'curso', @agora, 'delete from curso where coordenador_curso = null;', nome_usuario);
-end$$
-delimiter ;
-
-delimiter $$
-create procedure `deletar_ent_acad_null`(
- nome_usuario varchar(20)
-)
-begin
- /* Selecionando a data da execução da query */
- select cast(current_timestamp() as varchar(50)) into @agora;
- /* Realizando querys */
- delete from ent_academica where nome_ent_acad = null;
- delete from ent_academica where ano_abertura_acad = null;
- delete from ent_academica where curso_ent_acad = null;
- delete from ent_academica where quant_alunos_acad = null;
- delete from ent_academica where quant_horas_avaliar_acad = null;
- /* Registrando a alteração. */
- insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'ent_academica', @agora, 'delete from ent_academica where nome_ent_acad = null;', nome_usuario);
- insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'ent_academica', @agora, 'delete from ent_academica where ano_abertura_acad = null;', nome_usuario);
- insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'ent_academica', @agora, 'delete from ent_academica where curso_ent_acad = null;', nome_usuario);
- insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'ent_academica', @agora, 'delete from ent_academica where quant_alunos_acad = null;', nome_usuario);
- insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'ent_academica', @agora, 'delete from ent_academica where quant_horas_avaliar_acad = null;', nome_usuario);
-end$$
-delimiter ;
-
-delimiter $$
-create procedure `deletar_ativ_extra_null`(
- nome_usuario varchar(20)
-)
-begin
- /* Selecionando a data da execução da query */
- select cast(current_timestamp() as varchar(50)) into @agora;
- /* Realizando querys */
- delete from atividade_extra where id_atividade = null;
- delete from atividade_extra where id_aluno_atividade = null;
- delete from atividade_extra where data_ini_atividade = null;
- delete from atividade_extra where data_fim_atividade = null;
- delete from atividade_extra where nome_atividade = null;
- delete from atividade_extra where ra_aluno_atividade = null;
- delete from atividade_extra where tipo_curso_atividade = null;
- delete from atividade_extra where horas_atividade = null;
- delete from atividade_extra where tipo_atividade = null;
- delete from atividade_extra where url_atividade = null;
- delete from atividade_extra where status_atividade = null;
- /* Registrando a alteração. */
- insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'atividade_extra', @agora, 'delete from atividade_extra where id_atividade = null;', nome_usuario);
- insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'atividade_extra', @agora, 'delete from atividade_extra where id_aluno_atividade = null;', nome_usuario);
- insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'atividade_extra', @agora, 'delete from atividade_extra where data_ini_atividade = null;', nome_usuario);
- insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'atividade_extra', @agora, 'delete from atividade_extra where data_fim_atividade = null;', nome_usuario);
- insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'atividade_extra', @agora, 'delete from atividade_extra where nome_atividade = null;', nome_usuario);
- insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'atividade_extra', @agora, 'delete from atividade_extra where ra_aluno_atividade = null;', nome_usuario);
- insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'atividade_extra', @agora, 'delete from atividade_extra where tipo_curso_atividade  = null;', nome_usuario);
- insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'atividade_extra', @agora, 'delete from atividade_extra where horas_atividade  = null;', nome_usuario);
- insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'atividade_extra', @agora, 'delete from atividade_extra where tipo_atividade  = null;', nome_usuario);
- insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'atividade_extra', @agora, 'delete from atividade_extra where url_atividade  = null;', nome_usuario);
- insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'atividade_extra', @agora, 'delete from atividade_extra where status_atividade  = null;', nome_usuario);
-end$$
-delimiter ;
-
+/* Procedure de inserção na tabela de horas */
 delimiter $$
 create procedure `inserir_horas_tabela`(
  id_ int(3),
@@ -543,18 +390,157 @@ begin
 end;
 delimiter ;
 
-drop procedure deletar_coord_tabela;
-
-/* Pode ser chamada quando for detectado alteração */
 delimiter $$
- create procedure `_criar_log_`(msg varchar(100))
-  begin
-	declare cmd varchar(2000);
-	select cast(current_timestamp() as char(50)) into @hoje;
-	set cmd = concat(msg ,'>>',@hoje);
-	select concat('D:\\', @hoje,'_' ,'log.txt') as arquivo;
-	select cmd into outfile convert(arquivo, char);
-  end;
+create procedure `deletar_usuario_null`(
+ nome_usuario varchar(20)
+)
+begin
+ /* Selecionando a data da execução da query */
+ select cast(current_timestamp() as varchar(50)) into @agora;
+ /* Realizando querys */
+ delete from usuario where id_usuario = null;
+ delete from usuario where nome_usuario = null;
+ delete from usuario where curso = null;
+ delete from usuario where tipo_usuario = null;
+ delete from usuario where email_usuario = null;
+ delete from usuario where senha = null;
+ /* Registrando a alteração. */
+ insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'usuario', @agora, 'delete from usuario where id_usuario = null', nome_usuario);
+ insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'usuario', @agora, 'delete from usuario where nome_usuario = null;', nome_usuario);
+ insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'usuario', @agora, 'delete from usuario where curso = null;', nome_usuario);
+ insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'usuario', @agora, 'delete from usuario where tipo_usuario = null;', nome_usuario);
+ insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'usuario', @agora, 'delete from usuario where email_usuario = null;', nome_usuario);
+ insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'usuario', @agora, 'delete from usuario where senha = null;', nome_usuario);
+end$$
+delimiter ;
+
+delimiter $$
+create procedure `deletar_aluno_null`(
+ nome_usuario varchar(20)
+)
+begin
+ /* Selecionando a data da execução da query */
+ select cast(current_timestamp() as varchar(50)) into @agora;
+ /* Realizando querys */
+ delete from aluno where id_aluno_usuario = null;
+ delete from aluno where id_aluno = null;
+ delete from aluno where ra_aluno = null;
+ delete from aluno where nome_aluno = null;
+ delete from aluno where nome_ent_acad_aluno = null;
+ delete from aluno where ano_nascimento_aluno = null;
+ delete from aluno where curso_aluno = null;
+ delete from aluno where tipo_usuario_aluno = null;
+ delete from aluno where tipo_grad_aluno = null;
+ /* Registrando a alteração. */
+ insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'aluno', @agora, 'delete from aluno where id_aluno_usuario = null;', nome_usuario);
+ insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'aluno', @agora, 'delete from aluno where id_aluno = null;', nome_usuario);
+ insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'aluno', @agora, 'delete from aluno where ra_aluno = null;', nome_usuario);
+ insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'aluno', @agora, 'delete from aluno where nome_aluno = null;', nome_usuario);
+ insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'aluno', @agora, 'delete from aluno where nome_ent_acad_aluno = null;', nome_usuario);
+ insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'aluno', @agora, 'delete from aluno where curso_aluno = null;', nome_usuario);
+ insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'aluno', @agora, 'delete from aluno where tipo_usuario_aluno = null;', nome_usuario);
+ insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'aluno', @agora, 'delete from aluno where tipo_grad_aluno = null;', nome_usuario);
+end$$
+delimiter ;
+
+delimiter $$
+create procedure `deletar_coord_null`(
+ nome_usuario varchar(20)
+)
+begin
+ /* Selecionando a data da execução da query */
+ select cast(current_timestamp() as varchar(50)) into @agora;
+ /* Realizando querys */
+ delete from coordenador where id_coord_usuario = null;
+ delete from coordenador where nome_coord = null;
+ delete from coordenador where nome_ent_acad_coord = null;
+ delete from coordenador where tipo_usuario_coord = null;
+ delete from coordenador where curso_coord = null;
+ delete from coordenador where data_como_coord = null;
+ /* Registrando a alteração. */
+ insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'coordenador', @agora, 'delete from coordenador where id_coord_usuario = null;', nome_usuario);
+ insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'coordenador', @agora, 'delete from coordenador where nome_coord = null;', nome_usuario);
+ insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'coordenador', @agora, 'delete from coordenador where nome_ent_acad_coord = null;', nome_usuario);
+ insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'coordenador', @agora, 'delete from coordenador where tipo_usuario_coord = null;', nome_usuario);
+ insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'coordenador', @agora, 'delete from coordenador where curso_coord = null;', nome_usuario);
+ insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'coordenador', @agora, 'delete from coordenador where data_como_coord = null;', nome_usuario);
+end$$
+delimiter ;
+
+delimiter $$
+create procedure `deletar_curso_null`(
+ nome_usuario varchar(20)
+)
+begin
+ /* Selecionando a data da execução da query */
+ select cast(current_timestamp() as varchar(50)) into @agora;
+ /* Realizando querys */
+ delete from curso where nome_curso = null;
+ delete from curso where ano_curso = null;
+ delete from curso where tipo_curso = null;
+ delete from curso where coordenador_curso = null;
+ /* Registrando a alteração. */
+ insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'curso', @agora, 'delete from curso where nome_curso = null;', nome_usuario);
+ insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'curso', @agora, 'delete from curso where ano_curso = null;', nome_usuario);
+ insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'curso', @agora, 'delete from curso where tipo_curso = null;', nome_usuario);
+ insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'curso', @agora, 'delete from curso where coordenador_curso = null;', nome_usuario);
+end$$
+delimiter ;
+
+delimiter $$
+create procedure `deletar_ent_acad_null`(
+ nome_usuario varchar(20)
+)
+begin
+ /* Selecionando a data da execução da query */
+ select cast(current_timestamp() as varchar(50)) into @agora;
+ /* Realizando querys */
+ delete from ent_academica where nome_ent_acad = null;
+ delete from ent_academica where ano_abertura_acad = null;
+ delete from ent_academica where curso_ent_acad = null;
+ delete from ent_academica where quant_alunos_acad = null;
+ delete from ent_academica where quant_horas_avaliar_acad = null;
+ /* Registrando a alteração. */
+ insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'ent_academica', @agora, 'delete from ent_academica where nome_ent_acad = null;', nome_usuario);
+ insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'ent_academica', @agora, 'delete from ent_academica where ano_abertura_acad = null;', nome_usuario);
+ insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'ent_academica', @agora, 'delete from ent_academica where curso_ent_acad = null;', nome_usuario);
+ insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'ent_academica', @agora, 'delete from ent_academica where quant_alunos_acad = null;', nome_usuario);
+ insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'ent_academica', @agora, 'delete from ent_academica where quant_horas_avaliar_acad = null;', nome_usuario);
+end$$
+delimiter ;
+
+delimiter $$
+create procedure `deletar_ativ_extra_null`(
+ nome_usuario varchar(20)
+)
+begin
+ /* Selecionando a data da execução da query */
+ select cast(current_timestamp() as varchar(50)) into @agora;
+ /* Realizando querys */
+ delete from atividade_extra where id_atividade = null;
+ delete from atividade_extra where id_aluno_atividade = null;
+ delete from atividade_extra where data_ini_atividade = null;
+ delete from atividade_extra where data_fim_atividade = null;
+ delete from atividade_extra where nome_atividade = null;
+ delete from atividade_extra where ra_aluno_atividade = null;
+ delete from atividade_extra where tipo_curso_atividade = null;
+ delete from atividade_extra where horas_atividade = null;
+ delete from atividade_extra where tipo_atividade = null;
+ delete from atividade_extra where url_atividade = null;
+ delete from atividade_extra where status_atividade = null;
+ /* Registrando a alteração. */
+ insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'atividade_extra', @agora, 'delete from atividade_extra where id_atividade = null;', nome_usuario);
+ insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'atividade_extra', @agora, 'delete from atividade_extra where id_aluno_atividade = null;', nome_usuario);
+ insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'atividade_extra', @agora, 'delete from atividade_extra where data_ini_atividade = null;', nome_usuario);
+ insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'atividade_extra', @agora, 'delete from atividade_extra where data_fim_atividade = null;', nome_usuario);
+ insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'atividade_extra', @agora, 'delete from atividade_extra where nome_atividade = null;', nome_usuario);
+ insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'atividade_extra', @agora, 'delete from atividade_extra where ra_aluno_atividade = null;', nome_usuario);
+ insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'atividade_extra', @agora, 'delete from atividade_extra where tipo_curso_atividade  = null;', nome_usuario);
+ insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'atividade_extra', @agora, 'delete from atividade_extra where horas_atividade  = null;', nome_usuario);
+ insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'atividade_extra', @agora, 'delete from atividade_extra where tipo_atividade  = null;', nome_usuario);
+ insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'atividade_extra', @agora, 'delete from atividade_extra where url_atividade  = null;', nome_usuario);
+ insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) values (default, 'atividade_extra', @agora, 'delete from atividade_extra where status_atividade  = null;', nome_usuario);
+end$$
 delimiter ;
 
 /* Testando as procedures */
@@ -594,9 +580,6 @@ drop procedure deletar_ativ_extra_null;
 drop procedure deletar_horas_tabela;
 drop procedure deletar_curso_tabela; 
 drop procedure deletar_coord_tabela;
-
-drop procedure _criar_log_; 
-drop procedure _verifica_casos_null_;
 /* FIM Drop de procedures */
 
 
