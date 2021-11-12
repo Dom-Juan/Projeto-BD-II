@@ -1,6 +1,13 @@
+/* Usando o banco de dados. */
 use cacic_vhou_;
 
+/* Checkagem de status de triggers e procedures */
+show procedure status;
+show triggers in cacic_vhou_;
+
 /* Alterações feitas nas tabelas. */
+
+/* Não precisa executar isso ao criar o banco, as mudanças já foram implementadas no create table */
 alter table usuario modify email_usuario varchar(255);
 alter table usuario modify nome_usuario varchar(50);
 alter table usuario modify curso varchar(50);
@@ -219,14 +226,57 @@ delete from atividade_extra where id_atividade = 1896;
 /* FIM SQL Curso */
 
 /* Triggers */
+
+/* Triggers estão dando conflito com o insert. */
+drop trigger if exists `check_table_usuario`;
 delimiter $$
-create trigger atualiza_nome_coord after update on coordenador
-for each row
+/* Triggers para deletar colunas corrompidas no banco de dados */
+create trigger check_table_usuario before insert on usuario for each row
 begin
- update curso set coordenador_curso = new.curso.coordenador_curso where coordenador_curso = old.curso.coordenador_curso;  
+	call deletar_usuario_null('sistema'); 
 end;
 delimiter ;
 
+drop trigger if exists `check_table_aluno`;
+delimiter $$
+create trigger check_table_aluno before insert on aluno for each row
+begin
+	call deletar_aluno_null('sistema'); 
+end;
+delimiter ;
+
+drop trigger if exists `check_table_coord`;
+delimiter $$
+create trigger check_table_coord before insert on coordenador for each row
+begin
+	call deletar_coord_null('sistema'); 
+end;
+delimiter ;
+
+drop trigger if exists `check_table_curso`;
+delimiter $$
+create trigger check_table_curso before insert on curso for each row
+begin
+	call deletar_curso_null('sistema'); 
+end;
+delimiter ;
+
+drop trigger if exists `check_table_ent_acad`;
+delimiter $$
+create trigger check_table_ent_acad before insert on ent_academica for each row
+begin
+	call deletar_ent_acad_null('sistema'); 
+end;
+delimiter ;
+
+drop trigger if exists `check_table_ativ_extra`;
+delimiter $$
+create trigger check_table_ativ_extra before insert on atividade_extra for each row
+begin
+	call deletar_ativ_extra_null('sistema'); 
+end;
+/* Triggers para deletar colunas corrompidas no banco de dados */
+delimiter ;
 
 /* FIM Triggers */
 
@@ -308,44 +358,9 @@ begin
 end$$
 delimiter ;
 
-/* Procedure de inserção de curso. */
-delimiter $$
-create procedure `inserir_curso_tabela`(
- nome_ varchar(50),
- ano_ date,
- tipo_ varchar(20),
- coordenador_ varchar(20),
- nome_responsavel varchar(50)
-)
-begin
- /* Selecionando a data da execução da query */
- select cast(current_timestamp() as varchar(50)) into @agora;
-
- insert into curso (nome_curso, ano_curso, tipo_curso, coordenador_curso) values (nome_, ano_, tipo_, coordenador_);
- insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel)
-  values
- (default, 'curso', @agora, 'insert into curso (nome_curso, ano_curso, tipo_curso, coordenador_curso) values (nome_, ano_, tipo_, coordenador_);', nome_responsavel);
-end;
-delimiter ;
-
-/* Procedure de deletar uma coluna de curso. */
-delimiter $$
-create procedure `deletar_curso_tabela`(nome_curso_a_ser_deletado varchar(50), nome_responsavel varchar(50))
-begin
- /* Selecionando a data da execução da query */
- select cast(current_timestamp() as varchar(50)) into @agora;
-
- delete from curso where curso.nome_curso = nome_curso_a_ser_deletado;
-
- insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel)
-  values 
- (default, 'curso', @agora, 'delete from curso where nome_curso = nome_;', nome_responsavel);
-end;
-delimiter ;
-
 /* Procedure de inserção na tabela coordenador */
 delimiter $$
-create procedure `ìnserir_coord_tabela`(
+create procedure `inserir_coord_tabela`(
  id_ int(3),
  nome_ varchar(50),
  nome_ent_acad_ varchar(50),
@@ -390,6 +405,96 @@ begin
 end;
 delimiter ;
 
+/* Procedure de inserção de curso. */
+delimiter $$
+create procedure `inserir_curso_tabela`(
+ nome_ varchar(50),
+ ano_ date,
+ tipo_ varchar(20),
+ coordenador_ varchar(20),
+ nome_responsavel varchar(50)
+)
+begin
+ /* Selecionando a data da execução da query */
+ select cast(current_timestamp() as varchar(50)) into @agora;
+
+ insert into curso (nome_curso, ano_curso, tipo_curso, coordenador_curso) values (nome_, ano_, tipo_, coordenador_);
+ insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel)
+  values
+ (default, 'curso', @agora, 'insert into curso (nome_curso, ano_curso, tipo_curso, coordenador_curso) values (nome_, ano_, tipo_, coordenador_);', nome_responsavel);
+end;
+delimiter ;
+
+/* Procedure de deletar uma coluna de curso. */
+delimiter $$
+create procedure `deletar_curso_tabela`(nome_curso_a_ser_deletado varchar(50), nome_responsavel varchar(50))
+begin
+ /* Selecionando a data da execução da query */
+ select cast(current_timestamp() as varchar(50)) into @agora;
+
+ delete from curso where curso.nome_curso = nome_curso_a_ser_deletado;
+
+ insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel)
+  values 
+ (default, 'curso', @agora, 'delete from curso where nome_curso = nome_;', nome_responsavel);
+end;
+delimiter ;
+
+delimiter $$
+create procedure `atualizar_nome_coord_curso`(
+ nome_antigo varchar(50), 
+ nome_novo varchar(50), 
+ nome_responsavel varchar(50)
+)
+begin
+ /* Selecionando a data da execução da query */
+ select cast(current_timestamp() as varchar(50)) into @agora;
+ alter table curso drop foreign key curso_ibfk_1;
+ 
+ update curso set coordenador_curso = nome_novo where coordenador_curso = nome_antigo;
+ 
+ alter table curso add constraint curso_ibfk_1 foreign key (`coordenador_curso`) references coordenador(`nome_coord`);
+ 
+ insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) 
+ values 
+  (
+   default, 
+   'curso', 
+   @agora, 
+   'alter table curso drop foreign key coordenador_curso; update curso set coordenador_curso = nome_novo where coordenador_curso = nome_antigo; alter table curso add foreign key coordenador_curso references coordenador(nome_coord);',
+   nome_responsavel
+  );
+end;
+delimiter ;
+
+delimiter $$
+create procedure `inserir_enti_acad_tabela`(
+ nome_ varchar(50),
+ ano_abertura_ varchar(20),
+ curso_ varchar(50),
+ quant_alunos_ varchar(20),
+ quant_horas_avaliar_ varchar(20),
+ nome_responsavel varchar(50)
+)
+begin
+ /* Selecionando a data da execução da query */
+ select cast(current_timestamp() as varchar(50)) into @agora;
+ insert into ent_academica (nome_ent_acad, ano_abertura_acad, curso_ent_acad, quant_alunos_acad, quant_horas_avaliar_acad)
+  values 
+ (nome_, ano_abertura_, curso_, quant_alunos_, quant_horas_avaliar_);
+ insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel)
+  values 
+  (
+   default,
+   'ent_academica',
+   @agora,
+   'insert into ent_academica (nome_ent_acad, ano_abertura_acad, curso_ent_acad, quant_alunos_acad, quant_horas_avaliar_acad) values (nome_, ano_abertura_, curso_, quant_alunos_, quant_horas_avaliar_);',
+   nome_responsavel
+  );
+end;
+delimiter ;
+
+/* Procedures para deletar colunas corrompidas no banco. */
 delimiter $$
 create procedure `deletar_usuario_null`(
  nome_usuario varchar(20)
@@ -543,6 +648,8 @@ begin
 end$$
 delimiter ;
 
+/* Call de procedures */
+
 /* Testando as procedures */
 call inserir_horas_tabela('1', 'Monitoria', '2', '10 horas', '10', 'Computação', 'juan');
 call deletar_horas_tabela('467', 'Curso Online', 'juan');
@@ -550,37 +657,34 @@ call deletar_horas_tabela('467', 'Curso Online', 'juan');
 call inserir_curso_tabela('Curso teste', '1981-10-10', 'mat1010', 'juan', 'juan');
 call deletar_curso_tabela('Computação2', 'juan');
 
-call ìnserir_coord_tabela('321', 'Coordenador Teste', 'Sem entidade', 'coordenador', 'Computação', '2021-10-11', 'juan');
+call inserir_coord_tabela('321', 'Coordenador Teste', 'Sem entidade', 'coordenador', 'Computação', '2021-10-11', 'juan');
 
 call deletar_coord_tabela('321', 'Coord teste', 'juan'); 
-
-/* FIM Procedures */
-
-/* Call de procedures */
-call _criar_log_('teste') ;
-call deletar_ativ_extra_null();
-
 /* FIM Call de procedures */
 
 /* Drop de procedures */
-
 /* Inserindo colunas */
-drop procedure inserir_horas_tabela;
-drop procedure inserir_curso_tabela;
+drop procedure if exists inserir_horas_tabela;
+drop procedure if exists inserir_curso_tabela;
+drop procedure if exists inserir_enti_acad_tabela;
+drop procedure if exists inserir_coord_tabela;
+
+/* Update de colunas */
+drop procedure if exists atualizar_nome_coord_curso;
 
 /* Deletando colunas null */
-drop procedure deletar_usuario_null;
-drop procedure deletar_aluno_null;
-drop procedure deletar_coord_null;
-drop procedure deletar_curso_null;
-drop procedure deletar_ent_acad_null;
-drop procedure deletar_ativ_extra_null;
+drop procedure if exists deletar_usuario_null;
+drop procedure if exists deletar_aluno_null;
+drop procedure if exists deletar_coord_null;
+drop procedure if exists deletar_curso_null;
+drop procedure if exists deletar_ent_acad_null;
+drop procedure if exists deletar_ativ_extra_null;
 
 /* Deletando colunas */
-drop procedure deletar_horas_tabela;
-drop procedure deletar_curso_tabela; 
-drop procedure deletar_coord_tabela;
+drop procedure if exists deletar_horas_tabela;
+drop procedure if exists deletar_curso_tabela; 
+drop procedure if exists deletar_coord_tabela;
 /* FIM Drop de procedures */
 
-
+/* FIM Procedures */
 /* FIM SQL Banco de Dados. */

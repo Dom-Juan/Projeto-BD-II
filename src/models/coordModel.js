@@ -6,7 +6,7 @@ module.exports = {
     console.log("Id gerado: ", id_coord_usuario);
     return query_exec(
       connection,
-      "call ìnserir_coord_tabela(?, ?, ?, ?, ?, ?, ?);",
+      "call inserir_coord_tabela(?, ?, ?, ?, ?, ?, ?);",
       [id_coord_usuario, nome_coord, nome_ent_acad_coord, tipo_usuario_coord, curso_coord, data_como_coord, nome_responsavel]
     );
   },
