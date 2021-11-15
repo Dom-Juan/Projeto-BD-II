@@ -29,7 +29,10 @@ alter table ent_academica  modify curso_ent_acad varchar(50);
 
 alter table atividade_extra modify nome_atividade varchar(50);
 
+alter table horas_complementares modify nome_hora varchar(255);
+
 alter table tb_auditoria  modify nome_usuario_responsavel varchar(50);
+
 /* FIM Alterações feitas nas tabelas. */
 
 /* Criando o bando de dados */
@@ -104,7 +107,7 @@ create table atividade_extra(
 
 create table horas_complementares (
  id_hora int(3) not null,
- nome_hora varchar(20) not null,
+ nome_hora varchar(255) not null,
  carga_hora varchar(20) not null,
  limite_hora varchar(20) not null,
  procentagem_hora int not null,
@@ -286,7 +289,7 @@ delimiter ;
 delimiter $$
 create procedure `inserir_horas_tabela`(
  id_ int(3),
- nome_ varchar(20),
+ nome_ varchar(255),
  carga_ varchar(20),
  limite_ varchar(20),
  procentagem_ int,
@@ -333,7 +336,7 @@ delimiter ;
 delimiter $$
 create procedure `deletar_horas_tabela`(
  id_ int(3),
- nome_ varchar(20),
+ nome_ varchar(255),
  nome_responsavel varchar(50)
 )
 begin

@@ -6,11 +6,6 @@ module.exports = {
   async insert(req, res) {
     let curso = undefined;
     try {
-      const entidade = await entAcademicaModel.getByNome(req.body.nome_ent_acad);
-
-      if (entidade.length != 0) {
-        return res.json({ msg: "Essa entidade já existe no banco!" });
-      }
 
       curso = await cursoModel.getByCursoNome(req.body.curso_ent_acad);
       console.table(curso);
