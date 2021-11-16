@@ -54,6 +54,7 @@ routes.delete('/aluno/delete' , alunoController.deleteAluno); // Não pode está
 
 // Rotas do controlador de coordenadores.
 routes.post('/coordenador/register', coordenadorController.insert);
+routes.post('/coordenador/cadastro', coordenadorController.insert_frontend);
 routes.get('/coordenadores/' , coordenadorController.index);
 routes.delete('/coordenador/delete' , coordenadorController.deleteCoordenador);
 

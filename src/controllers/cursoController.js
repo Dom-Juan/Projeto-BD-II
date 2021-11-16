@@ -12,6 +12,9 @@ module.exports = {
         return res.json({ msg: "Curso já existe no banco!" });
       }
 
+      if(req.body.coordenador_curso === undefined)
+        return res.status(500).json({ msg: "Impossível ler undefined de um coordenador" });
+
       coord = await coordModel.getByNome(req.body.coordenador_curso);
       if (coord[0].id_coord_usuario !== undefined) {
         console.table(coord);

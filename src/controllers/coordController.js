@@ -47,6 +47,36 @@ module.exports = {
     }
   },
 
+  async insert_frontend(req, res) {
+    let usuario = undefined;
+    let nome_responsavel = req.body.nome_responsavel;
+    
+    console.table(req.body);
+    
+    try{
+      
+      let user = await usuarioModel.getByUsername(req.body.nome_usuario);
+
+      if(user.length != 0) {
+        return res.json({msg:"Este usuário já existe!"});
+      }
+
+      const coordenador = await coordModel.getByNome(req.body.nome_coord);
+
+      if (coordenador.length != 0) {
+        return res.json({ msg: "Coordenador já existe no banco!" });
+      }
+
+      const newUser = await usuarioModel.insert(req.body, req.body.id_usuario);
+      const newCoordenador = await coordModel.insert(req.body, req.body.id_usuario, req.body.nome_responsavel);
+
+      return res.json({newCoordenador, msg: "Usuário criado"});
+    } catch(error) {
+      console.error(error);
+      return res.status(500).json({msg: "internal server error"});
+    }
+  },
+
   async getById(req, res) {
     try {
       const response = await coordModel.getById(req.body.id_coord_usuario);
