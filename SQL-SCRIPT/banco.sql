@@ -89,6 +89,15 @@ create table curso(
  foreign key (coordenador_curso) references coordenador(nome_coord)
 );
 
+create table aux_curso(
+ id_aux_curso int(3),
+ id_aluno_aux_curso int(3),
+ nome_aux_curso varchar(50),
+ primary key(id_aux_curso),
+ foreign key (nome_aux_curso) references curso(nome_curso),
+ foreign key (id_aluno_aux_curso) references aluno(id_aluno_usuario)
+);
+
 create table atividade_extra(
  id_atividade varchar(4) not null,
  id_aluno_atividade integer(3),
@@ -430,6 +439,24 @@ delimiter ;
 
 /* Procedure de deletar uma coluna de curso. */
 delimiter $$
+create procedure `inserir_aux_curso_tabela`(
+ id_aux_curso_ int(3),
+ id_aluno_aux_curso_ int(3),
+ nome_aux_curso_ varchar(50),
+ nome_responsavel varchar(50)
+)
+begin
+ /* Selecionando a data da execução da query */
+ select cast(current_timestamp() as varchar(50)) into @agora;
+ insert into aux_curso (id_aux_curso, id_aluno_aux_curso, nome_aux_curso) values (id_aux_curso_, id_aluno_aux_curso_, nome_aux_curso_);
+ insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel)
+  values
+ (default, 'aux_curso', @agora, 'insert into aux_curso (id_aux_curso, id_aluno_aux_curso, nome_aux_curso) values (id_aux_curso_, id_aluno_aux_curso_, nome_aux_curso_);', nome_responsavel);
+end;
+delimiter ;
+
+/* Procedure de deletar uma coluna de curso. */
+delimiter $$
 create procedure `deletar_curso_tabela`(nome_curso_a_ser_deletado varchar(50), nome_responsavel varchar(50))
 begin
  /* Selecionando a data da execução da query */
@@ -443,6 +470,22 @@ begin
 end;
 delimiter ;
 
+/* Procedure de deletar uma coluna de aux curso. */
+delimiter $$
+create procedure `deletar_aux_curso_tabela`(id_aux_curso_ int(3), nome_responsavel varchar(50))
+begin
+ /* Selecionando a data da execução da query */
+ select cast(current_timestamp() as varchar(50)) into @agora;
+
+ delete from aux_curso where aux_curso.id_aux_curso = id_aux_curso_;
+
+ insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel)
+  values 
+ (default, 'aux_cursocurso', @agora, 'delete from aux_curso where aux_curso.id_aux_curso = id_aux_curso_;', nome_responsavel);
+end;
+delimiter ;
+
+/* Update de nome do coordenador de curso*/
 delimiter $$
 create procedure `atualizar_nome_coord_curso`(
  nome_antigo varchar(50), 
@@ -465,6 +508,31 @@ begin
    'curso', 
    @agora, 
    'alter table curso drop foreign key coordenador_curso; update curso set coordenador_curso = nome_novo where coordenador_curso = nome_antigo; alter table curso add foreign key coordenador_curso references coordenador(nome_coord);',
+   nome_responsavel
+  );
+end;
+delimiter ;
+
+/* Update de nome do curso*/
+delimiter $$
+create procedure `atualizar_nome_de_curso`(
+ nome_antigo varchar(50), 
+ nome_novo varchar(50), 
+ nome_responsavel varchar(50)
+)
+begin
+ /* Selecionando a data da execução da query */
+ select cast(current_timestamp() as varchar(50)) into @agora;
+ 
+ update curso set nome_curso = nome_novo where nome_curso = nome_antigo;
+ 
+ insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) 
+ values 
+  (
+   default, 
+   'curso', 
+   @agora, 
+   'update curso set nome_curso = nome_novo where nome_curso = nome_antigo;',
    nome_responsavel
   );
 end;
@@ -671,9 +739,11 @@ drop procedure if exists inserir_horas_tabela;
 drop procedure if exists inserir_curso_tabela;
 drop procedure if exists inserir_enti_acad_tabela;
 drop procedure if exists inserir_coord_tabela;
+drop procedure if exists inserir_aux_curso_tabela;
 
 /* Update de colunas */
 drop procedure if exists atualizar_nome_coord_curso;
+drop procedure if exists atualizar_nome_de_curso;
 
 /* Deletando colunas null */
 drop procedure if exists deletar_usuario_null;
@@ -687,6 +757,7 @@ drop procedure if exists deletar_ativ_extra_null;
 drop procedure if exists deletar_horas_tabela;
 drop procedure if exists deletar_curso_tabela; 
 drop procedure if exists deletar_coord_tabela;
+drop procedure if exists deletar_aux_curso_tabela;
 /* FIM Drop de procedures */
 
 /* FIM Procedures */

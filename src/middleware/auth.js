@@ -16,7 +16,7 @@ module.exports = {
     try {
       const decoded = await promisify(jwt.verify)(token, authConfig.secret);
 
-      req.user_id = decoded.ra_aluno;
+      req.user_id = decoded.id_usuario;
       req.user_level = decoded.tipo_usuario;
 
       return next();

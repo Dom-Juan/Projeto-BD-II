@@ -49,7 +49,7 @@ routes.delete('/user/delete' , usuarioController.deleteUsuario);  // Não pode e
 
 // Rotas do controlador de alunos.
 routes.post('/aluno/register', alunoController.insert);
-routes.get('/aluno/alunos' , alunoController.index);
+routes.get('/aluno/alunos' , sessionMiddlware.auth, alunoController.index);
 routes.delete('/aluno/delete' , alunoController.deleteAluno); // Não pode estár acessível no front-end;
 
 // Rotas do controlador de coordenadores.
@@ -59,32 +59,32 @@ routes.get('/coordenadores/' , coordenadorController.index);
 routes.delete('/coordenador/delete' , coordenadorController.deleteCoordenador);
 
 // Rotas do controlador de cursos.
-routes.post('/curso/cadastrar', cursoController.insert);
-routes.get('/curso/todos', cursoController.index);
+routes.post('/curso/cadastrar', sessionMiddlware.auth, cursoController.insert);
+routes.get('/curso/todos', sessionMiddlware.auth, cursoController.index);
 //routes.get('/curso/id', cursoController.getById);
-routes.get('/curso/nome', cursoController.getByCursoNome);
-routes.delete('/curso/deletar' , cursoController.deleteCurso);
+routes.get('/curso/nome', sessionMiddlware.auth, cursoController.getByCursoNome);
+routes.delete('/curso/deletar' , sessionMiddlware.auth, cursoController.deleteCurso);
 
 // Rotas do controlador de atividades.
-routes.post('/atividade/enviar', upload.single('comprovante'), atividadeController.insert);
-routes.get('/atividade/todas', atividadeController.index);
-routes.get('/atividade/id', atividadeController.getById);
-routes.get('/atividade/curso', atividadeController.getByCurso);
-routes.delete('/atividade/deletar' , atividadeController.deleteAtividade);
+routes.post('/atividade/enviar', upload.single('comprovante'), sessionMiddlware.auth, atividadeController.insert);
+routes.get('/atividade/todas', sessionMiddlware.auth, atividadeController.index);
+routes.get('/atividade/id', sessionMiddlware.auth, atividadeController.getById);
+routes.get('/atividade/curso', sessionMiddlware.auth, atividadeController.getByCurso);
+routes.delete('/atividade/deletar' , sessionMiddlware.auth, atividadeController.deleteAtividade);
 
 // Rotas do controlador de horas complementares.
-routes.post('/horas/cadastrar', horasController.insert);
-routes.get('/horas/todas', horasController.index);
-routes.get('/horas/id', horasController.getById);
-routes.get('/horas/nome', horasController.getByNome);
-routes.get('/horas/curso', horasController.getByCurso);
-routes.delete('/horas/deletar' , horasController.deleteHora);
+routes.post('/horas/cadastrar', sessionMiddlware.auth, horasController.insert);
+routes.get('/horas/todas', sessionMiddlware.auth, horasController.index);
+routes.get('/horas/id', sessionMiddlware.auth, horasController.getById);
+routes.get('/horas/nome', sessionMiddlware.auth, horasController.getByNome);
+routes.get('/horas/curso', sessionMiddlware.auth, horasController.getByCurso);
+routes.delete('/horas/deletar' , sessionMiddlware.auth, horasController.deleteHora);
 
 // Rotas do controlador de entidade academias.
-routes.post('/entidade/cadastrar', entidadeAcadController.insert);
-routes.get('/entidade/todas', entidadeAcadController.index);
-routes.get('/entidade/id', entidadeAcadController.getById);
-routes.get('/entidade/curso', entidadeAcadController.getByCursoNome);
-routes.delete('/entidade/deletar' , entidadeAcadController.deleteEntidade);
+routes.post('/entidade/cadastrar', sessionMiddlware.auth, entidadeAcadController.insert);
+routes.get('/entidade/todas', sessionMiddlware.auth, entidadeAcadController.index);
+routes.get('/entidade/id', sessionMiddlware.auth, entidadeAcadController.getById);
+routes.get('/entidade/curso', sessionMiddlware.auth, entidadeAcadController.getByCursoNome);
+routes.delete('/entidade/deletar' , sessionMiddlware.auth, entidadeAcadController.deleteEntidade);
 
 module.exports = routes;
