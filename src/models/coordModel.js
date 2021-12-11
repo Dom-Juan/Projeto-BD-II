@@ -11,6 +11,15 @@ module.exports = {
     );
   },
 
+  update({nome_coord, nome_ent_acad_coord, data_como_coord}, id_coord_usuario, nome_responsavel) {
+    console.log("Id gerado: ", id_coord_usuario);
+    return query_exec(
+      connection,
+      "call atualizar_coord_tabela(?, ?, ?, ?, ?);",
+      [id_coord_usuario, nome_coord, nome_ent_acad_coord, data_como_coord, nome_responsavel]
+    );
+  },
+
   getAll() {
     return query_exec(
       connection,

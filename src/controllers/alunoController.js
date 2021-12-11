@@ -32,6 +32,35 @@ module.exports = {
     }
   },
 
+  async update(req, res) {
+    try {
+      const aluno = await alunoModel.getByRa(req.body.ra_aluno);
+
+      if(aluno[0] == undefined ||aluno[0].ra_aluno == undefined) {
+        return res.json({msg:"Este usuário com este RA não existe!"});
+      }
+
+      let usuario = await usuarioModel.getById(req.body.id_usuario);
+
+      if(usuario.length === 0) {
+        return res.json({msg: "Usuário não existe!"});
+      } else {
+        if(usuario[0].tipo_usuario !== "coordenador") {
+          console.table(usuario);
+    
+          const updatedAluno = await alunoModel.update(req.body, usuario[0].id_usuario, req.body.nome_responsavel);
+          console.log("Coordenador a ser atualizado:", updatedAluno);
+          return res.json({updatedAluno});
+        } else {
+          return res.status(500).json({msg: "Usuário é um coordenador."});
+        }
+      }
+    } catch(error) {
+      console.error(error);
+      return res.status(500).json({msg: "internal server error"});
+    }
+  },
+
   async index(req, res) {
     try {
       const response = await alunoModel.getAll();

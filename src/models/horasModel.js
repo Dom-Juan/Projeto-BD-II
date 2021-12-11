@@ -13,6 +13,14 @@ module.exports = {
     );
   },
 
+  update({id_, nome_hora, carga_hora, limite_hora, procentagem_hora, nome_r}) {
+    return query_exec(
+      connection,
+      "call atualizar_horas_tabela(?, ?, ?, ?, ?, ?);",
+      [id_, nome_hora, carga_hora, limite_hora, procentagem_hora, nome_r]
+    );
+  },
+
   getAll() {
     return query_exec(
       connection,

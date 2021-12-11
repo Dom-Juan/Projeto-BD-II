@@ -37,6 +37,40 @@ module.exports = {
     }
   },
 
+  async update(req, res) {
+    let usuario = undefined;
+    let nome_responsavel = req.body.nome_responsavel;
+    try {
+      const coordenador = await coordModel.getById(req.body.id_usuario);
+
+      if (coordenador[0] == undefined) {
+        return res.json({ msg: "Coordenador não existe no banco!!!" });
+      }
+
+      usuario = await usuarioModel.getById(req.body.id_usuario);
+      if (usuario[0].id_usuario !== undefined) {
+        console.table(usuario);
+
+        if (usuario.length === 0) {
+          return res.status(500).json({ msg: "Usuário não existe!" });
+        } else {
+          if (usuario[0].tipo_usuario === "coordenador") {
+            const updatedCoordenador = await coordModel.update(req.body, usuario[0].id_usuario, nome_responsavel);
+            console.log("Coordenador a ser atualizado:", updatedCoordenador);
+            return res.json({ updatedCoordenador });
+          } else {
+            return res.status(500).json({ msg: "Usuário é um aluno." });
+          }
+        }
+      } else {
+        return res.status(500).json({ msg: "Impossível ler undefined de usuário" });
+      }
+    } catch (error) {
+      console.error(error);
+      return res.status(error.code).json({ msg: error.code + error.message });
+    }
+  },
+
   async index(req, res) {
     try {
       const response = await coordModel.getAll();

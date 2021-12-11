@@ -10,6 +10,14 @@ module.exports = {
     );
   },
 
+  update({ ra_aluno, nome_aluno, nome_ent_acad_aluno, ano_nascimento_aluno, tipo_usuario_aluno, tipo_grad_aluno }, id, nome_responsavel) {
+    return query_exec(
+      connection,
+      "call atualizar_aluno_tabela (?, ?, ?, ?, ?, ?, ?)",
+      [id, ra_aluno, nome_aluno, nome_ent_acad_aluno, ano_nascimento_aluno, tipo_grad_aluno, nome_responsavel]
+    );
+  },
+
   getAll() {
     return query_exec(
       connection,

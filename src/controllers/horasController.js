@@ -20,6 +20,23 @@ module.exports = {
     }
   },
 
+  async update(req, res) {
+    try {
+      const hora = await horasModel.getById(req.body.id_);
+      
+      if(hora.length == 0) {
+        return res.json({msg:"Esta hora complementar com este nome não existe!"});
+      }
+
+      const updatedHoraComplementar = await horasModel.update(req.body);
+    
+      return res.json({updatedHoraComplementar});
+    } catch(error) {
+      console.error(error);
+      return res.status(500).json({msg: "internal server error"});
+    }
+  },
+
   async index(req, res) {
     try {
       const response = await horasModel.getAll();

@@ -70,6 +70,15 @@ create table coordenador(
  foreign key (id_coord_usuario) references usuario(id_usuario)
 );
 
+create table curso(
+ nome_curso varchar(50),
+ ano_curso date,
+ tipo_curso varchar(20),
+ coordenador_curso varchar(50),
+ primary key (nome_curso),
+ foreign key (coordenador_curso) references coordenador(nome_coord)
+);
+
 create table ent_academica(
  nome_ent_acad varchar(50),
  ano_abertura_acad varchar(20),
@@ -80,15 +89,6 @@ create table ent_academica(
  foreign key (curso_ent_acad) references curso(nome_curso)
 );
 
-create table curso(
- nome_curso varchar(50),
- ano_curso date,
- tipo_curso varchar(20),
- coordenador_curso varchar(50),
- primary key (nome_curso),
- foreign key (coordenador_curso) references coordenador(nome_coord)
-);
-
 create table aux_curso(
  id_aux_curso int(3),
  id_aluno_aux_curso int(3),
@@ -96,6 +96,17 @@ create table aux_curso(
  primary key(id_aux_curso),
  foreign key (nome_aux_curso) references curso(nome_curso),
  foreign key (id_aluno_aux_curso) references aluno(id_aluno_usuario)
+);
+
+create table horas_complementares (
+ id_hora int(3) not null,
+ nome_hora varchar(255) not null,
+ carga_hora varchar(20) not null,
+ limite_hora varchar(20) not null,
+ procentagem_hora int not null,
+ nome_curso_hora varchar(20) not null,
+ primary key (id_hora),
+ foreign key (nome_curso_hora) references curso(nome_curso)
 );
 
 create table atividade_extra(
@@ -112,17 +123,6 @@ create table atividade_extra(
  status_atividade varchar(20),
  primary key(id_atividade),
  foreign key (id_aluno_atividade) references aluno(id_aluno_usuario)
-);
-
-create table horas_complementares (
- id_hora int(3) not null,
- nome_hora varchar(255) not null,
- carga_hora varchar(20) not null,
- limite_hora varchar(20) not null,
- procentagem_hora int not null,
- nome_curso_hora varchar(20) not null,
- primary key (id_hora),
- foreign key (nome_curso_hora) references curso(nome_curso)
 );
 
 create table tb_auditoria (
@@ -294,6 +294,43 @@ delimiter ;
 
 
 /* Procedures */
+/* Procedure atualizar aluno */
+delimiter $$
+create procedure `atualizar_aluno_tabela`(
+ id_usuario int(3),
+ ra_aluno_ varchar(20),
+ nome_aluno_ varchar(50),
+ nome_ent_acad_aluno_ varchar(50),
+ ano_nascimento_aluno_ date,
+ tipo_grad_aluno_ varchar(25),
+ nome_r varchar(50)
+)
+begin
+ /* Selecionando a data da execução da query */
+ select cast(current_timestamp() as varchar(50)) into @agora;
+
+ update aluno set ra_aluno = ra_aluno_ where id_aluno_usuario = id_usuario;
+ update aluno set nome_aluno = nome_aluno_ where id_aluno_usuario = id_usuario;
+ update aluno set nome_ent_acad_aluno = nome_ent_acad_aluno_ where id_aluno_usuario = id_usuario;
+ update aluno set ano_nascimento_aluno = ano_nascimento_aluno_ where id_aluno_usuario = id_usuario;
+ update aluno set tipo_grad_aluno = tipo_grad_aluno_ where id_aluno_usuario = id_usuario;
+
+ insert into tb_auditoria (
+ id_,
+ nome_tabela,
+ data_alterado,
+ sql_usado,
+ nome_usuario_responsavel
+)values (
+ default,
+ 'aluno',
+ @agora,
+ 'update aluno set ra_aluno = ra_aluno_ where id_aluno_usuario = id_usuario; update aluno set nome_aluno = nome_aluno_ where id_aluno_usuario = id_usuario; update aluno set nome_ent_acad_aluno = nome_ent_acad_aluno_ where id_aluno_usuario = id_usuario; update aluno set ano_nascimento_aluno = ano_nascimento_aluno_ where id_aluno_usuario = id_usuario; update aluno set tipo_grad_aluno = tipo_grad_aluno_ where id_aluno_usuario = id_usuario;',
+ nome_r
+);
+end$$
+delimiter ;
+
 /* Procedure de inserção na tabela de horas */
 delimiter $$
 create procedure `inserir_horas_tabela`(
@@ -309,7 +346,7 @@ begin
  /* Selecionando a data da execução da query */
  select cast(current_timestamp() as varchar(50)) into @agora;
 
-/* Procedure para inserir na tabela horas */
+/* Inserindo na tabela */
  insert into horas_complementares (
  id_hora,
  nome_hora,
@@ -336,6 +373,41 @@ begin
  'horas_complementares',
  @agora,
  'insert into horas_complementares (id_hora, nome_hora, carga_hora, limite_hora, procentagem_hora, nome_curso_hora) values (id_, nome_, carga_, limite_, procentagem_, nome_curso_);',
+ nome_r
+);
+end$$
+delimiter ;
+
+/* Procedure de atualização na tabela de horas */
+delimiter $$
+create procedure `atualizar_horas_tabela`(
+ id_ int(3),
+ nome_ varchar(255),
+ carga_ varchar(20),
+ limite_ varchar(20),
+ procentagem_ int,
+ nome_r varchar(50)
+)
+begin
+ /* Selecionando a data da execução da query */
+ select cast(current_timestamp() as varchar(50)) into @agora;
+
+ update horas_complementares set nome_hora = nome_ where id_hora = id_;
+ update horas_complementares set carga_hora = carga_ where id_hora = id_;
+ update horas_complementares set limite_hora = limite_ where id_hora = id_;
+ update horas_complementares set procentagem_hora = procentagem_ where id_hora = id_;
+
+ insert into tb_auditoria (
+ id_,
+ nome_tabela,
+ data_alterado,
+ sql_usado,
+ nome_usuario_responsavel
+)values (
+ default,
+ 'horas_complementares',
+ @agora,
+ 'update horas_complementares set nome_hora = nome_ where id_hora = id_; update horas_complementares set carga_hora = carga_ where id_hora = id_; update horas_complementares set limite_hora = limite_ where id_hora = id_; update horas_complementares set procentagem_hora = procentagem_ where id_hora = id_;',
  nome_r
 );
 end$$
@@ -396,10 +468,44 @@ begin
   nome_responsavel
  );
 end;
-
-/* Procedure de deletar uma linha na tabela coordenador */
 delimiter ;
 
+/* Atualizar tabela coordenador*/
+delimiter $$
+create procedure `atualizar_coord_tabela`(
+ id_ int(3),
+ nome_ varchar(50),
+ nome_ent_acad_ varchar(50),
+ data_como_coord date,
+ nome_responsavel varchar(50)
+)
+begin
+ select cast(current_timestamp() as varchar(50)) into @agora;
+
+ #alter table curso drop foreign key curso_ibfk_1;
+ SET FOREIGN_KEY_CHECKS = 0;
+ 
+ update coordenador set nome_coord = nome_ where id_coord_usuario = id_;
+ update coordenador set nome_ent_acad_coord = nome_ent_acad_ where id_coord_usuario = id_;
+ update coordenador set data_como_coord = data_como_coord where id_coord_usuario = id_;
+ update tb_auditoria  set nome_usuario_responsavel = nome_ where nome_usuario_responsavel = nome_responsavel; 
+
+ #alter table curso add constraint curso_ibfk_1 foreign key (`coordenador_curso`) references coordenador(`nome_coord`);
+ SET FOREIGN_KEY_CHECKS = 1;
+
+ insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) 
+  values 
+ (
+  default,
+  'coordenador',
+  @agora, 
+  'update coordenador set nome_coord = nome_ where id_coord_usuario = id_; update coordenador set nome_ent_acad_coord = nome_ent_acad_ where id_coord_usuario = id_; update coordenador set data_como_coord = data_como_coord where id_coord_usuario = id_;',
+  nome_responsavel
+ );
+end;
+delimiter ;
+
+/* Procedure de deletar uma linha na tabela coordenador */
 delimiter $$
 create procedure `deletar_coord_tabela`(id_ int(3), nome_ varchar(50), nome_responsavel varchar(50))
 begin
@@ -538,6 +644,53 @@ begin
 end;
 delimiter ;
 
+/* Update de um curso*/
+delimiter $$
+create procedure `atualizar_curso`(
+ nome_antigo varchar(50), 
+ nome_novo varchar(50),
+ ano_curso_novo date,
+ tipo_curso_novo varchar(20),
+ coordenador_curso_novo varchar(50),
+ nome_responsavel varchar(50)
+)
+begin
+ /* Selecionando a data da execução da query */
+ select cast(current_timestamp() as varchar(50)) into @agora;
+
+ alter table curso drop foreign key curso_ibfk_1;
+ alter table ent_academica drop foreign key ent_academica_ibfk_1;
+ alter table horas_complementares drop foreign key horas_complementares_ibfk_1;
+ 
+ update curso set nome_curso = nome_novo where nome_curso = nome_antigo;
+ update curso set ano_curso = ano_curso_novo where nome_curso = nome_antigo;
+ update curso set tipo_curso = tipo_curso_novo where nome_curso = nome_antigo;
+ update curso set coordenador_curso = coordenador_curso_novo where nome_curso = nome_antigo;
+
+ /* Atualizando nomes aonde o curso aparece. */
+ update ent_academica set curso_ent_acad = nome_novo where curso_ent_acad = nome_antigo;
+ update horas_complementares set nome_curso_hora = nome_novo where nome_curso_hora = nome_antigo;
+ update aluno set curso_aluno = nome_novo where curso_aluno = nome_antigo;
+ update coordenador set curso_coord = nome_novo where curso_coord = nome_antigo;
+ update aux_curso set nome_aux_curso = nome_novo where nome_aux_curso = nome_antigo;
+
+ alter table curso add constraint curso_ibfk_1 foreign key (`coordenador_curso`) references coordenador(`nome_coord`);
+ alter table ent_academica add constraint ent_academica_ibfk_1 foreign key (`curso_ent_acad`) references curso(`nome_curso`);
+ alter table horas_complementares add constraint horas_complementares_ibfk_1 foreign key (`nome_curso_hora`) references curso(`nome_curso`);
+ 
+ insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel) 
+ values 
+  (
+   default, 
+   'curso', 
+   @agora, 
+   'update curso set nome_curso = nome_novo where nome_curso = nome_antigo; update curso set ano_curso = ano_curso_novo where nome_curso = nome_antigo; update curso set tipo_curso = tipo_curso_novo where nome_curso = nome_antigo; update curso set coordenador_curso = coordenador_curso_novo where nome_curso = nome_antigo;',
+   nome_responsavel
+  );
+end;
+delimiter ;
+
+/* Procedure de inserir uma entidade academica. */
 delimiter $$
 create procedure `inserir_enti_acad_tabela`(
  nome_ varchar(50),
@@ -744,6 +897,9 @@ drop procedure if exists inserir_aux_curso_tabela;
 /* Update de colunas */
 drop procedure if exists atualizar_nome_coord_curso;
 drop procedure if exists atualizar_nome_de_curso;
+drop procedure if exists atualizar_aluno_tabela;
+drop procedure if exists atualizar_curso;
+drop procedure if exists atualizar_coord_tabela;
 
 /* Deletando colunas null */
 drop procedure if exists deletar_usuario_null;

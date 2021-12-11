@@ -10,6 +10,14 @@ module.exports = {
     );
   },
 
+  update({nome_curso, ano_curso, tipo_curso, coordenador_curso}, nome_responsavel, nome_antigo) {
+    return query_exec(
+      connection,
+      "call atualizar_curso(?, ?, ?, ?, ?, ?)",
+      [nome_antigo, nome_curso, ano_curso, tipo_curso, coordenador_curso, nome_responsavel]
+    );
+  },
+
   getAll() {
     return query_exec(
       connection,
