@@ -52,6 +52,14 @@ module.exports = {
     );
   },
 
+  getAllAlunoId(id_usuario) {
+    return query_exec(
+      connection,
+      "select * from atividade_extra where id_aluno_atividade = ?",
+      [id_usuario]
+    );
+  },
+
   getByNome(nome_atividade) {
     return query_exec(connection,
       "select * from atividade_extra where nome_atividade = ?",

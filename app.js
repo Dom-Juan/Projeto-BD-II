@@ -27,6 +27,10 @@ class App {
       const status = err.status || 500;
       res.status(status);
       res.render('error');
+      res.json({
+        message: err.message,
+        error: err
+      });
     });
   }
 }

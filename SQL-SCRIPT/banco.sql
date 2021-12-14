@@ -294,6 +294,70 @@ delimiter ;
 
 
 /* Procedures */
+
+/* Procedure atualizar usuário */
+delimiter $$
+create procedure `atualizar_usuario_tabela`(
+ id_ int(3),
+ nome_usuario_ varchar(50),
+ curso_ varchar(50),
+ email_usuario_ varchar(255),
+ nome_responsavel varchar(50)
+)
+begin
+ /* Selecionando a data da execução da query */
+ select cast(current_timestamp() as varchar(50)) into @agora;
+
+ update usuario set nome_usuario = nome_usuario_ where id_usuario = id_;
+ update usuario set curso = curso_ where id_usuario = id_;
+ update usuario set email_usuario = email_usuario_ where id_usuario = id_;
+
+ insert into tb_auditoria (
+  id_,
+  nome_tabela,
+  data_alterado,
+  sql_usado,
+  nome_usuario_responsavel
+ )values (
+  default,
+  'usuario',
+  @agora,
+  'update set usuario nome_usuario = nome_usuario_ where id_usuario = id_; update set usuario curso = curso_ where id_usuario = id_; update set usuario email_usuario = email_usuario_ where id_usuario = id_;',
+  nome_responsavel
+ ); 
+end;
+delimiter ;
+
+/* Procedure de atualizar a senha do usuário. */
+delimiter $$
+create procedure `atualizar_usuario_senha_tabela`(
+ id_ int(3),
+ senha_nova varchar(25),
+ nome_responsavel varchar(50)
+)
+begin
+ /* Selecionando a data da execução da query */
+ select cast(current_timestamp() as varchar(50)) into @agora;
+
+ update usuario set senha = senha_nova where id_usuario = id_;
+
+ insert into tb_auditoria (
+  id_,
+  nome_tabela,
+  data_alterado,
+  sql_usado,
+  nome_usuario_responsavel
+ )values (
+  default,
+  'usuario',
+  @agora,
+  'update set usuario senha = nova_senha where id_usuario = id_;',
+  nome_responsavel
+ ); 
+end;
+delimiter ;
+
+
 /* Procedure atualizar aluno */
 delimiter $$
 create procedure `atualizar_aluno_tabela`(
@@ -718,6 +782,44 @@ begin
 end;
 delimiter ;
 
+/* Procedure de atualizar entidade acadêmica. */
+delimiter $$
+create procedure `atualizar_enti_acad_tabela`(
+ nome_ varchar(50),
+ ano_abertura_ varchar(20),
+ curso_ varchar(50),
+ quant_alunos_ varchar(20),
+ quant_horas_avaliar_ varchar(20),
+ nome_responsavel varchar(50)
+)
+begin
+ /* Selecionando a data da execução da query */
+ select cast(current_timestamp() as varchar(50)) into @agora;
+
+ alter table curso drop foreign key curso_ibfk_1;
+ alter table ent_academica drop foreign key ent_academica_ibfk_1;
+ 
+ update ent_academica set nome_ent_acad = nome_ where nome_ent_acad = nome_ent_acad;
+ update ent_academica set ano_abertura_acad = ano_abertura_ where nome_ent_acad = nome_ent_acad;
+ update ent_academica set curso_ent_acad = curso_ where nome_ent_acad = nome_ent_acad;
+ update ent_academica set quant_alunos_acad = quant_alunos_ where nome_ent_acad = nome_ent_acad;
+ update ent_academica set quant_horas_avaliar_acad = quant_horas_avaliar_ where nome_ent_acad = nome_ent_acad;
+
+ alter table curso add constraint curso_ibfk_1 foreign key (`coordenador_curso`) references coordenador(`nome_coord`);
+ alter table ent_academica add constraint ent_academica_ibfk_1 foreign key (`curso_ent_acad`) references curso(`nome_curso`);
+
+ insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel)
+  values 
+  (
+   default,
+   'ent_academica',
+   @agora,
+   'update ent_academica set nome_ent_acad = nome_ where nome_ent_acad = nome_ent_acad; update ent_academica set ano_abertura_acad = ano_abertura_ where nome_ent_acad = nome_ent_acad; update ent_academica set curso_ent_acad = curso_ where nome_ent_acad = nome_ent_acad; update ent_academica set quant_alunos_acad = quant_alunos_ where nome_ent_acad = nome_ent_acad; update ent_academica set quant_horas_avaliar_acad = quant_horas_avaliar_ where nome_ent_acad = nome_ent_acad;',
+   nome_responsavel
+  );
+end;
+delimiter ;
+
 /* Procedures para deletar colunas corrompidas no banco. */
 delimiter $$
 create procedure `deletar_usuario_null`(
@@ -895,9 +997,11 @@ drop procedure if exists inserir_coord_tabela;
 drop procedure if exists inserir_aux_curso_tabela;
 
 /* Update de colunas */
+drop procedure if exists atualizar_usuario_tabela;
+drop procedure if exists atualizar_usuario_senha_tabela;
+drop procedure if exists atualizar_aluno_tabela;
 drop procedure if exists atualizar_nome_coord_curso;
 drop procedure if exists atualizar_nome_de_curso;
-drop procedure if exists atualizar_aluno_tabela;
 drop procedure if exists atualizar_curso;
 drop procedure if exists atualizar_coord_tabela;
 

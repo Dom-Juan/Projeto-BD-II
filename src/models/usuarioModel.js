@@ -21,6 +21,26 @@ module.exports = {
     }}
   },
 
+  update({id_usuario, nome_usuario, curso, email_usuario}) {
+    if(id_usuario !== undefined || id_usuario !== null) {
+      return query_exec(
+        connection,
+        "call atualizar_usuario_tabela(?, ?, ?, ?, ?)",
+        [id_usuario, nome_usuario, curso, email_usuario, nome_usuario]
+      );
+    }
+  },
+
+  update_password({id_usuario, nome_usuario, senha_usuario}) {
+    if(senha_usuario !== undefined || senha_usuario !== null) {
+      return query_exec(
+        connection,
+        "call atualizar_usuario_senha_tabela(?, ?, ?)",
+        [id_usuario, senha_usuario, nome_usuario]
+      );
+    }
+  },
+
   getAll() {
     return query_exec(
       connection,

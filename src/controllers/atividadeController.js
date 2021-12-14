@@ -47,6 +47,18 @@ module.exports = {
     }
   },
 
+  async index_id(req, res) {
+    try {
+      const response = await atividadeModel.getAllAlunoId(req.body.id_usuario);
+      if(response) {
+        return res.json({atividades: response});
+      }
+    } catch(error) {
+      console.error(error);
+      return res.status(500).json({msg: 'internal server error.'});
+    }
+  },
+
   async getById(req, res) {
     try {
       const response = await atividadeModel.getById(req.body.id_atividade);

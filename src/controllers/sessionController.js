@@ -12,6 +12,8 @@ class SessionController {
     console.log(req.body);
     if (req.body.nivel === 'aluno') {
       user = await usuarioModel.getByEmail(req.body.email);
+      if(user.length === 0)
+        return res.status(404).json({ error: 'User not found' });
       acesso = await alunoModel.getById(user[0].id_usuario);
     } else if (req.body.nivel === 'coordenador') {
       user = await usuarioModel.getByEmail(req.body.email);
@@ -20,19 +22,19 @@ class SessionController {
     console.table(acesso);
 
     if (user.length === 0) {
-      return res.status(401).json({ error: 'User not found' });
+      return res.status(404).json({ error: 'User not found' });
     }
 
     if (user[0].senha !== req.body.senha) {
-      return res.status(401).json({ error: 'Password does not match' });
+      return res.status(404).json({ error: 'Password does not match' });
     }
 
     if (req.body.nivel === 'aluno') {
       console.log('Aluno acessando: ', acesso[0]);
       const result = {
+        id_usuario: user[0].id_usuario,
         ra_aluno: acesso[0].ra_aluno,
         nome: acesso[0].nome_aluno,
-        email: user[0].email_usuario,
         nivel: user[0].tipo_usuario,
       }
 
@@ -47,8 +49,8 @@ class SessionController {
     } else {
       console.log('Coordenador acessando: ', acesso[0]);
       const result = {
-        nome: acesso[0].nome_aluno,
-        email: user[0].email_usuario,
+        id_usuario: user[0].id_usuario,
+        nome: acesso[0].nome_coord,
         nivel: user[0].tipo_usuario,
       }
 

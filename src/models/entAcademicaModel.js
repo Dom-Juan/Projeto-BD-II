@@ -10,6 +10,14 @@ module.exports = {
     );
   },
 
+  update({nome_ent_acad, ano_abertura_acad, curso_ent_acad, quant_alunos_acad, quant_horas_avaliar_acad, nome_responsavel}) {
+    return query_exec(
+      connection,
+      "call atualizar_enti_acad_tabela(?, ?, ?, ?, ?, ?)",
+      [nome_ent_acad, ano_abertura_acad, curso_ent_acad, quant_alunos_acad, quant_horas_avaliar_acad, nome_responsavel]
+    );
+  },
+
   getAll() {
     return query_exec(
       connection,

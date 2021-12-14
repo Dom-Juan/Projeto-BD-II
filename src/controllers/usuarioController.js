@@ -60,6 +60,40 @@ module.exports = {
     }
   },
 
+  async update(req, res) {
+    let check = undefined;
+    try {
+      check = await usuarioModel.getById(req.body.id_usuario);
+      
+      if(check.length === 0) {
+        return res.status(500).json({msg: "Usuário não existe."});
+      }
+
+      const updatedUser = await usuarioModel.update(req.body);
+
+      console.table(updatedUser);
+
+      return res.json({updatedUser});
+    } catch(error) {
+      console.error(error);
+      return res.status(500).json({msg: "internal server error"});
+    }
+  },
+
+  async update_password(req, res) {
+    try {
+
+      const updatedUser = await usuarioModel.update_password(req.body);
+
+      console.table(updatedUser);
+
+      return res.json({updatedUser});
+    } catch(error) {
+      console.error(error);
+      return res.status(500).json({msg: "internal server error"});
+    }
+  },
+
   async index(req, res) {
     try {
       const response = await usuarioModel.getAll();
