@@ -28,6 +28,7 @@ const alunoController = require('./src/controllers/alunoController');
 const coordenadorController = require('./src/controllers/coordController');
 const atividadeController = require('./src/controllers/atividadeController');
 const cursoController = require('./src/controllers/cursoController');
+const auxCursoController = require('./src/controllers/auxCursoController');
 const entidadeAcadController = require('./src/controllers/entAcadController');
 const horasController = require('./src/controllers/horasController');
 
@@ -69,6 +70,13 @@ routes.get('/curso/todos', cursoController.index);
 //routes.get('/curso/id', cursoController.getById);
 routes.get('/curso/nome', sessionMiddleWare.auth, cursoController.getByCursoNome);
 routes.delete('/curso/deletar' , sessionMiddleWare.auth, cursoController.deleteCurso);
+
+// Rotas do controlador de aux cursos.
+routes.post('/aux-curso/cadastrar', auxCursoController.insert);
+routes.put('/aux-curso/editar', sessionMiddleWare.auth, auxCursoController.update);
+routes.get('/aux-curso/todos', auxCursoController.index);
+routes.get('/aux-curso/id', auxCursoController.getById);
+routes.delete('/aux-curso/deletar' , sessionMiddleWare.auth, auxCursoController.deleteCurso);
 
 // Rotas do controlador de atividades.
 routes.post('/atividade/enviar', upload.single('comprovante'), sessionMiddleWare.auth, atividadeController.insert);
