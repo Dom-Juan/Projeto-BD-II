@@ -1,0 +1,13 @@
+Page negócios:
+	> modal editar e adicionar são o mesmo
+	> problemas no dropdown
+	> botão de deletar não funciona
+Cargos:
+	> Excluir e editar não funciona.
+	> (opcional) tirar adicionar ?
+Tabela Comercial:
+	> PRIORIDADE: desenvolver
+Grupos de concórcio:
+	> Finanças n funciona, ver isso ai.
+Relatório:
+	> Implementar parte do pdf

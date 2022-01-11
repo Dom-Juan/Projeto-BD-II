@@ -44,6 +44,15 @@ module.exports = {
     );
   },
 
+  update(id_atividade, status_atividade, nome_responsavel) {
+    return query_exec(
+      connection,
+      //"call atualizar_atividade_extra(?, ?, ?)",
+      "update atividade_extra set status_atividade = ? where id_atividade = ?",
+      [status_atividade, id_atividade]
+    );
+  },
+
   getAll() {
     return query_exec(
       connection,

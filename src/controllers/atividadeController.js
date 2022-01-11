@@ -1,5 +1,7 @@
 'use strict';
+
 const atividadeModel = require('../models/atividadeModel');
+const coordModel = require('../models/coordModel');
 const alunoModel = require('../models/alunoModel');
 
 module.exports = {
@@ -21,7 +23,7 @@ module.exports = {
         if(aluno[0].tipo_usuario_aluno !== "coordenador") {
           console.table("Aluno que tem esse RA:", aluno);
     
-          let url_atividade = req.file.path;
+          let url_atividade = req.file.filename;
           let status_atividade = "pendente";
 
           const newAtividade = await atividadeModel.insert(req.body, aluno[0].id_aluno_usuario, url_atividade, status_atividade);
@@ -34,6 +36,34 @@ module.exports = {
     } catch(error) {
       console.error(error);
       return res.status(500).json({msg: "internal server error"});
+    }
+  },
+
+  async avaliar(req, res) {
+    let coord = undefined;
+    try{
+      console.log("Corpo: ", req.body);
+      const atividade = await atividadeModel.getByNome(req.body.nome_atividade);
+      
+      if(atividade.length == 0)
+        return res.json({msg:"Esta atividade com este nome não existe!"});
+
+      coord = await coordModel.getById(req.body.id_coord_usuario);
+
+      if (coord.length == 0)
+        return res.status(500).json({ msg: "Coordenador não existe." });
+
+      let nome_responsavel = coord[0].nome_coord;
+      let status_atividade = req.body.status_atividade;
+      let id_atividade = atividade[0].id_atividade;
+      const updatedAtividade = await atividadeModel.update(id_atividade, status_atividade,  nome_responsavel);
+
+      console.table(updatedAtividade);
+  
+      return res.json({updatedAtividade});
+
+    } catch (error) {
+
     }
   },
 

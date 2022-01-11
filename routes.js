@@ -1,26 +1,9 @@
-// Geração de ids de atividade.
-const { customAlphabet } = require('nanoid');
-const nanoid = customAlphabet('abc1234567890ebc', 7);
-
 // Import de bibliotecas para serem usadas na rota.
 const { Router } = require('express');
-const multer  = require('multer');
 const routes = Router();
 
-// pegando a data atual.
-let data = new Date();
-
-// Criando o local aonde será adicionado os arquivos.
-let storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, './uploads/')
-  },
-  filename: function (req, file, cb) {
-    cb(null,  nanoid(7)+"_"+data.getFullYear()+"_"+(data.getMonth()+1)+"_"+data.getDate()+file.originalname);
-  }
-});
 // cria a função de upload.
-const upload = multer({ storage: storage });
+const upload = require("./src/middleware/fileUpload");
 
 // Controladores que pedem e usam modelos do banco de dados.
 const usuarioController = require('./src/controllers/usuarioController');
@@ -31,6 +14,7 @@ const cursoController = require('./src/controllers/cursoController');
 const auxCursoController = require('./src/controllers/auxCursoController');
 const entidadeAcadController = require('./src/controllers/entAcadController');
 const horasController = require('./src/controllers/horasController');
+const fileController = require("./src/controllers/fileUploadController");
 
 // Controle de autenticação.
 const sessionController = require('./src/controllers/sessionController');
@@ -79,8 +63,15 @@ routes.get('/aux-curso/id', auxCursoController.getById);
 routes.delete('/aux-curso/deletar' , sessionMiddleWare.auth, auxCursoController.deleteCurso);
 
 // Rotas do controlador de atividades.
-routes.post('/atividade/enviar', upload.single('comprovante'), sessionMiddleWare.auth, atividadeController.insert);
+routes.post('/atividade/enviar', upload, sessionMiddleWare.auth, atividadeController.insert);
+routes.put('/atividade/avaliar/', sessionMiddleWare.auth, atividadeController.avaliar);
+routes.get("/atividade/download/:name", fileController.downloadFiles);
+routes.get("/atividade/download/front/:name", fileController.downloadFileFront);
+routes.get("/atividade/get-file/:name", fileController.getFile);
 //routes.post('/atividade/editar', upload.single('comprovante'), sessionMiddleWare.auth, atividadeController.update);
+
+routes.get("/files", fileController.getFilesList);
+
 routes.get('/atividade/todas', sessionMiddleWare.auth, atividadeController.index);
 routes.get('/atividade/todas/id', sessionMiddleWare.auth, atividadeController.index_id);
 routes.get('/atividade/id', sessionMiddleWare.auth, atividadeController.getById);

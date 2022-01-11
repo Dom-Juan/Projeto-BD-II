@@ -1,0 +1,7 @@
+Interface:
+	Admin:
+		> Cadastrar Entidade.
+		> Cadastrar Horas.
+	Menu e Admin:
+		> Passar os gets e updates na interface.
+* Adicionar authenticação

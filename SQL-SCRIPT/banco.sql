@@ -230,7 +230,6 @@ insert into atividade_extra (
 
 select * from horas_complementares hc;
 
-delete from atividade_extra where id_atividade = 1896;
 /* FIM SQL Atividade Extra */
 
 /* SQL Curso */
@@ -754,6 +753,31 @@ begin
 end;
 delimiter ;
 
+/*Procedure de atualizar status de uma atividade academica.*/
+delimiter $$
+create procedure `atualizar_atividade_extra`(
+id_ativ varchar(4),
+status_atividade_ varchar(20),
+nome_responsavel_ varchar(50)
+)
+begin
+ /* Selecionando a data da execução da query */
+ select cast(current_timestamp() as varchar(50)) into @agora;
+
+ update atividade_extra set status_atividade = status_atividade_ where id_atividade = id_ativ;
+
+ insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel)
+  values 
+  (
+   default,
+   'ent_academica',
+   @agora,
+   'update atividade_extra set status_atividade = status_atividade_ where id_atividade = id_ativ;',
+   nome_responsavel
+  );
+end;
+delimiter ;
+
 /* Procedure de inserir uma entidade academica. */
 delimiter $$
 create procedure `inserir_enti_acad_tabela`(
@@ -1004,6 +1028,7 @@ drop procedure if exists atualizar_nome_coord_curso;
 drop procedure if exists atualizar_nome_de_curso;
 drop procedure if exists atualizar_curso;
 drop procedure if exists atualizar_coord_tabela;
+drop procedure if exists atualizar_atividade_extra;
 
 /* Deletando colunas null */
 drop procedure if exists deletar_usuario_null;
