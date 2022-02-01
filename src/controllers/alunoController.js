@@ -34,7 +34,7 @@ module.exports = {
 
   async update(req, res) {
     try {
-      const aluno = await alunoModel.getByRa(req.body.ra_aluno);
+      const aluno = await alunoModel.getById(req.body.id_usuario);
 
       if(aluno[0] == undefined ||aluno[0].ra_aluno == undefined) {
         return res.json({msg:"Este usuário com este RA não existe!"});
@@ -42,13 +42,20 @@ module.exports = {
 
       let usuario = await usuarioModel.getById(req.body.id_usuario);
 
-      if(usuario.length === 0) {
+      if(usuario.length === 0 && (aluno[0].ra_aluno === req.body.ra_aluno)) {
         return res.json({msg: "Usuário não existe!"});
       } else {
         if(usuario[0].tipo_usuario !== "coordenador") {
           console.table(usuario);
-    
-          const updatedAluno = await alunoModel.update(req.body, usuario[0].id_usuario, req.body.nome_responsavel);
+          let obj = {
+            ra_aluno: req.body.ra_aluno,
+            nome_aluno: req.body.nome_aluno,
+            nome_ent_acad_aluno: req.body.nome_ent_acad_aluno,
+            ano_nascimento_aluno: req.body.ano_nascimento_aluno, 
+            tipo_usuario_aluno: aluno[0].tipo_usuario_aluno,
+            tipo_grad_aluno: aluno[0].tipo_grad_aluno 
+          }
+          const updatedAluno = await alunoModel.update(obj, usuario[0].id_usuario, req.body.nome_responsavel);
           console.log("Coordenador a ser atualizado:", updatedAluno);
           return res.json({updatedAluno});
         } else {
@@ -75,6 +82,24 @@ module.exports = {
     try {
       const response = await alunoModel.getById(req.body.id_aluno_usuario);
       if(response) return res.status(200).json({response});
+    } catch(error) {
+      console.error(error);
+      return res.status(500).json({msg: 'internal server error'});
+    }
+  },
+
+  async getByIdFront(req, res) {
+    try {
+      const getId = await alunoModel.getById(req.query.id_aluno_usuario);
+      let obj = {
+        id_aluno_usuario: getId[0].id_aluno_usuario,
+        ra_aluno: getId[0].ra_aluno,
+        nome_aluno: getId[0].nome_aluno,
+        nome_ent_acad_aluno: getId[0].nome_ent_acad_aluno,
+        ano_nascimento_aluno: getId[0].ano_nascimento_aluno,
+      }
+      console.log("Acessando aluno: \n", obj);
+      if(obj) return res.status(200).json(obj);
     } catch(error) {
       console.error(error);
       return res.status(500).json({msg: 'internal server error'});

@@ -28,8 +28,10 @@ routes.post('/session', sessionController.login);
 // Rotas do controlador de usuário.
 routes.post('/user/register', usuarioController.insert);
 routes.post('/user/cadastro', usuarioController.insert_frontend);
-routes.put('/user/editar', usuarioController.update);
-routes.put('/user/resetar-senha', usuarioController.update_password);
+routes.put('/user/editar', sessionMiddleWare.auth, usuarioController.update);
+routes.put('/user/trocar/senha', sessionMiddleWare.auth, usuarioController.update_password);
+routes.put('/user/trocar/email', sessionMiddleWare.auth, usuarioController.update_email_and_psw);
+routes.get('/user/id', sessionMiddleWare.auth, usuarioController.getByIdFront);
 routes.get('/user/users' , usuarioController.index);
 routes.get('/user/email' , usuarioController.getByEmail);
 routes.delete('/user/delete' , usuarioController.deleteUsuario);  // Não pode estár acessível no front-end;
@@ -37,6 +39,8 @@ routes.delete('/user/delete' , usuarioController.deleteUsuario);  // Não pode e
 // Rotas do controlador de alunos.
 routes.post('/aluno/register', alunoController.insert);
 routes.put('/aluno/editar', sessionMiddleWare.auth, alunoController.update);
+//routes.put('/aluno/trocar/nome', sessionMiddleWare.auth, alunoController.update_name);
+routes.get('/aluno/id', sessionMiddleWare.auth, alunoController.getByIdFront);
 routes.get('/aluno/alunos' , sessionMiddleWare.auth, alunoController.index);
 routes.delete('/aluno/delete' , alunoController.deleteAluno); // Não pode estár acessível no front-end;
 
@@ -44,6 +48,8 @@ routes.delete('/aluno/delete' , alunoController.deleteAluno); // Não pode está
 routes.post('/coordenador/register', coordenadorController.insert);
 routes.post('/coordenador/cadastro', coordenadorController.insert_frontend);
 routes.put('/coordenador/editar', sessionMiddleWare.auth, coordenadorController.update);
+//routes.put('/coordenador/trocar/nome', sessionMiddleWare.auth, coordenadorController.update_name);
+routes.get('/coordenador/id', sessionMiddleWare.auth, coordenadorController.getByIdFront);
 routes.get('/coordenadores/' , coordenadorController.index);
 routes.delete('/coordenador/delete' , coordenadorController.deleteCoordenador);
 

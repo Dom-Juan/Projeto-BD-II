@@ -55,7 +55,12 @@ module.exports = {
           return res.status(500).json({ msg: "Usuário não existe!" });
         } else {
           if (usuario[0].tipo_usuario === "coordenador") {
-            const updatedCoordenador = await coordModel.update(req.body, usuario[0].id_usuario, nome_responsavel);
+            let obj = {
+              nome_coord: req.body.nome_coord,
+              nome_ent_acad_coord: req.body.nome_ent_acad_coord,
+              data_como_coord: req.body.data_como_coord
+            }
+            const updatedCoordenador = await coordModel.update(obj, usuario[0].id_usuario, nome_responsavel);
             console.log("Coordenador a ser atualizado:", updatedCoordenador);
             return res.json({ updatedCoordenador });
           } else {
@@ -78,6 +83,23 @@ module.exports = {
     } catch (error) {
       console.error(error);
       return res.status(error.code).json({ msg: error.code + error.message });
+    }
+  },
+
+  async getByIdFront(req, res) {
+    try {
+      console.log(req.query);
+      const getId = await coordModel.getById(req.query.id_aluno_usuario);
+      let obj = {
+        id_coord_usuario: getId[0].id_coord_usuario,
+        nome_coord: getId[0].nome_coord,
+        nome_ent_acad_coord: getId[0].nome_ent_acad_coord,
+        data_como_coord: getId[0].data_como_coord,
+      }
+      if(obj) return res.status(200).json(obj);
+    } catch(error) {
+      console.error(error);
+      return res.status(500).json({msg: 'internal server error'});
     }
   },
 

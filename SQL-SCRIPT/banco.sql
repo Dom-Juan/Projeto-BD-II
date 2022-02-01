@@ -356,6 +356,36 @@ begin
 end;
 delimiter ;
 
+/* Procedure de atualizar a senha do usuário. */
+delimiter //
+create procedure `atualizar_usuario_email_nome_tabela`(
+ nome_novo_ varchar(25),
+ email_novo_ varchar(255),
+ id_ int(3),
+ nome_responsavel varchar(50)
+)
+begin
+ /* Selecionando a data da execução da query */
+ select cast(current_timestamp() as varchar(50)) into @agora;
+
+ update usuario set nome_usuario  = nome_novo_  where id_usuario = id_;
+ update usuario set email_usuario = email_novo_  where id_usuario = id_;
+
+ insert into tb_auditoria (
+  id_,
+  nome_tabela,
+  data_alterado,
+  sql_usado,
+  nome_usuario_responsavel
+ )values (
+  default,
+  'usuario',
+  @agora,
+  'update set usuario senha = nova_senha where id_usuario = id_;',
+  nome_responsavel
+ ); 
+end;//
+delimiter ;
 
 /* Procedure atualizar aluno */
 delimiter $$
@@ -1023,6 +1053,7 @@ drop procedure if exists inserir_aux_curso_tabela;
 /* Update de colunas */
 drop procedure if exists atualizar_usuario_tabela;
 drop procedure if exists atualizar_usuario_senha_tabela;
+drop procedure if exists atualizar_usuario_email_nome_tabela;
 drop procedure if exists atualizar_aluno_tabela;
 drop procedure if exists atualizar_nome_coord_curso;
 drop procedure if exists atualizar_nome_de_curso;

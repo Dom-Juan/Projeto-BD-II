@@ -6,7 +6,7 @@ const nanoid = customAlphabet('1234567890', 3);
 
 module.exports = {
   insert({nome_usuario, curso, tipo_usuario, email_usuario, senha}, id) {
-    if(id === undefined || id === null) {
+    if(id === undefined && id === null) {
       return query_exec(
         connection,
         "insert into usuario (id_usuario, nome_usuario, curso, tipo_usuario, email_usuario, senha) values (?, ?, ?, ?, ?, ?)",
@@ -32,11 +32,22 @@ module.exports = {
   },
 
   update_password({id_usuario, nome_usuario, senha_usuario}) {
-    if(senha_usuario !== undefined || senha_usuario !== null) {
+    if(senha_usuario !== undefined && senha_usuario !== null) {
       return query_exec(
         connection,
         "call atualizar_usuario_senha_tabela(?, ?, ?)",
         [id_usuario, senha_usuario, nome_usuario]
+      );
+    }
+  },
+
+  update_email_and_psw(nome_usuario, email_usuario, id_usuario, nome_responsavel) {
+    console.log("Executor de MySQL: \n",{nome_usuario, email_usuario, id_usuario});
+    if(nome_usuario !== undefined && email_usuario !== undefined) {
+      return query_exec(
+        connection,
+        "call atualizar_usuario_email_nome_tabela(?, ?, ?, ?)",
+        [nome_usuario, email_usuario, id_usuario, nome_responsavel]
       );
     }
   },
