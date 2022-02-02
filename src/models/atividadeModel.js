@@ -44,12 +44,53 @@ module.exports = {
     );
   },
 
-  update(id_atividade, status_atividade, nome_responsavel) {
+  avaliar(id_atividade, status_atividade, nome_responsavel) {
     return query_exec(
       connection,
       //"call atualizar_atividade_extra(?, ?, ?)",
       "update atividade_extra set status_atividade = ? where id_atividade = ?",
       [status_atividade, id_atividade]
+    );
+  },
+
+  update({
+    id_atividade,
+    data_ini_atividade,
+    data_fim_atividade,
+    nome_atividade,
+    ra_aluno_atividade,
+    tipo_curso_atividade,
+    horas_atividade,
+    tipo_atividade,
+  }, id_aluno_atividade,  url_atividade, status_atividade) {
+    console.log("ID da atividade:", status_atividade);
+    console.log("Entrou no model Atividade\n", {
+      data_ini_atividade,
+      data_fim_atividade,
+      nome_atividade,
+      ra_aluno_atividade,
+      tipo_curso_atividade,
+      horas_atividade,
+      tipo_atividade,
+      url_atividade,
+      status_atividade
+    }, id_aluno_atividade);
+    return query_exec(
+      connection,
+      "call atualizar_atividade_extra_completo (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      [
+        id_atividade,
+        id_aluno_atividade,
+        data_ini_atividade,
+        data_fim_atividade,
+        nome_atividade,
+        ra_aluno_atividade,
+        tipo_curso_atividade,
+        horas_atividade,
+        tipo_atividade,
+        url_atividade,
+        status_atividade
+      ]
     );
   },
 

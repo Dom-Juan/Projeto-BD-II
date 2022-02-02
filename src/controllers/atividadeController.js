@@ -9,11 +9,13 @@ module.exports = {
     //console.log(req.file, req.body);
     //console.log(req.body.ra_aluno_atividade);
     try {
+      /*
       const atividade = await atividadeModel.getByNome(req.body.nome_atividade);
       
       if(atividade.length != 0) {
         return res.json({msg:"Esta atividade com este nome já existe!"});
       }
+      */
 
       let aluno = await alunoModel.getByRa(req.body.ra_aluno_atividade);
 
@@ -29,6 +31,33 @@ module.exports = {
           const newAtividade = await atividadeModel.insert(req.body, aluno[0].id_aluno_usuario, url_atividade, status_atividade);
     
           return res.json({newAtividade});
+        } else {
+          return res.status(500).json({msg: "Usuário é um coordenador."});
+        }
+      }
+    } catch(error) {
+      console.error(error);
+      return res.status(500).json({msg: "internal server error"});
+    }
+  },
+
+  async update(req, res, next) {
+    try {
+      console.log("Entrando em editar!");
+      let aluno = await alunoModel.getByRa(req.body.ra_aluno_atividade);
+
+      if(aluno.length === 0) {
+        return res.json({msg: "Usuário não existe!"});
+      } else {
+        if(aluno[0].tipo_usuario_aluno !== "coordenador") {
+          console.table("Aluno que tem esse RA:", aluno);
+    
+          let url_atividade = req.file.filename;
+          let status_atividade = "pendente";
+
+          const updatedAtividade = await atividadeModel.update(req.body, aluno[0].id_aluno_usuario, url_atividade, status_atividade);
+    
+          return res.json({updatedAtividade});
         } else {
           return res.status(500).json({msg: "Usuário é um coordenador."});
         }
@@ -56,7 +85,7 @@ module.exports = {
       let nome_responsavel = coord[0].nome_coord;
       let status_atividade = req.body.status_atividade;
       let id_atividade = atividade[0].id_atividade;
-      const updatedAtividade = await atividadeModel.update(id_atividade, status_atividade,  nome_responsavel);
+      const updatedAtividade = await atividadeModel.avaliar(id_atividade, status_atividade,  nome_responsavel);
 
       console.table(updatedAtividade);
   

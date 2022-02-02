@@ -70,11 +70,11 @@ routes.delete('/aux-curso/deletar' , sessionMiddleWare.auth, auxCursoController.
 
 // Rotas do controlador de atividades.
 routes.post('/atividade/enviar', upload, sessionMiddleWare.auth, atividadeController.insert);
+routes.put('/atividade/editar', upload, sessionMiddleWare.auth, atividadeController.update);
 routes.put('/atividade/avaliar/', sessionMiddleWare.auth, atividadeController.avaliar);
 routes.get("/atividade/download/:name", fileController.downloadFiles);
 routes.get("/atividade/download/front/:name", fileController.downloadFileFront);
 routes.get("/atividade/get-file/:name", fileController.getFile);
-//routes.post('/atividade/editar', upload.single('comprovante'), sessionMiddleWare.auth, atividadeController.update);
 
 routes.get("/files", fileController.getFilesList);
 

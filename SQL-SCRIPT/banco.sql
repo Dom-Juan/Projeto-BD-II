@@ -145,92 +145,7 @@ create table tb_auditoria (
  *   
  */
 
-/* SQL Usuario */
-insert into usuario (
- id_usuario, 
- nome_usuario, 
- curso, 
- tipo_usuario, 
- email_usuario, 
- senha
-) values (
- 321, 
- 'Coord teste', 
- 'Computação', 
- 'coordenador', 
- 'coord_teste@email.com', 
- 'abc123'
-);
-
-delete from usuario where id_usuario = 555;
-/* FIM SQL Usuario */
-
-/* SQL Aluno */
-insert into aluno values (
- 181,
- default,
- '171257111',
- 'teste_',
- 'CACIC',
- '1998-01-20',
- 'Computação',
- 'aluno',
- 'bacharelado'
-);
-
-delete from aluno where id_aluno_usuario = 181;
-/* FIM SQL Aluno */
-
-/* SQL Coordenador */
-insert into coordenador (
- id_coord_usuario, 
- nome_coord, 
- nome_ent_acad_coord, 
- tipo_usuario_coord, 
- curso_coord,
- data_como_coord
-) values (
- 181,
- 'teste_',
- 'CACIC',
- 'coordenador',
- 'Computação',
- '2021-10-28'
-);
-
-delete from coordenador where id_coord_usuario = 181;
-/* FIM SQL Coordenador */
-
-/* SQL Atividade Extra */
-insert into atividade_extra (
- id_atividade,
- id_aluno_atividade,
- data_ini_atividade,
- data_fim_atividade,
- nome_atividade,
- ra_aluno_atividade,
- tipo_curso_atividade,
- horas_atividade,
- tipo_atividade,
- url_atividade,
- status_atividade
-) values (
- 'ad12',
- 123,
- '2021-10-1',
- '2021-10-2',
- 'Batata',
- '17344343',
- 'Computação',
- '2horas',
- 'andar',
- 'a',
- 'pendente'
-);
-
 select * from horas_complementares hc;
-
-/* FIM SQL Atividade Extra */
 
 /* SQL Curso */
 
@@ -808,6 +723,38 @@ begin
 end;
 delimiter ;
 
+/* Procedure de atualizar a atividade */
+delimiter //
+create procedure `atualizar_atividade_extra_completo`(
+ id_atividade_ varchar(4),
+ id_aluno_atividade_ integer(3),
+ data_ini_atividade_ varchar(20),
+ data_fim_atividade_ varchar(20),
+ nome_atividade_ varchar(50),
+ ra_aluno_atividade_ varchar(20),
+ tipo_curso_atividade_ varchar(20),
+ horas_atividade_ varchar(20),
+ tipo_atividade_ varchar(35),
+ url_atividade_ varchar(100),
+ status_atividade_ varchar(20)
+)
+begin
+ /* Selecionando a data da execução da query */
+ select cast(current_timestamp() as varchar(50)) into @agora;
+
+ update atividade_extra set data_ini_atividade = data_ini_atividade_ where id_atividade = id_atividade_;
+ update atividade_extra set data_fim_atividade = data_fim_atividade_ where id_atividade = id_atividade_;
+ update atividade_extra set nome_atividade = nome_atividade_ where id_atividade = id_atividade_;
+ update atividade_extra set ra_aluno_atividade = ra_aluno_atividade_ where id_atividade = id_atividade_;
+ update atividade_extra set tipo_curso_atividade = tipo_curso_atividade_ where id_atividade = id_atividade_;
+ update atividade_extra set horas_atividade = horas_atividade_ where id_atividade = id_atividade_;
+ update atividade_extra set tipo_atividade = tipo_atividade_ where id_atividade = id_atividade_;
+ update atividade_extra set url_atividade = url_atividade_ where id_atividade = id_atividade_;
+ update atividade_extra set status_atividade = status_atividade_ where id_atividade = id_atividade_;
+
+end; //
+delimiter ;
+
 /* Procedure de inserir uma entidade academica. */
 delimiter $$
 create procedure `inserir_enti_acad_tabela`(
@@ -1060,6 +1007,7 @@ drop procedure if exists atualizar_nome_de_curso;
 drop procedure if exists atualizar_curso;
 drop procedure if exists atualizar_coord_tabela;
 drop procedure if exists atualizar_atividade_extra;
+drop procedure if exists atualizar_atividade_extra_completo;
 
 /* Deletando colunas null */
 drop procedure if exists deletar_usuario_null;
