@@ -10,6 +10,7 @@ module.exports = {
 
       curso = await cursoModel.getByCursoNome(req.body.curso_ent_acad);
       console.table(curso);
+      console.table(req.body);
 
       if(curso[0] !== undefined && curso[0].nome_curso !== undefined  && curso.length != 0) {
         const newEntidade = await entAcademicaModel.insert(req.body);
@@ -87,7 +88,8 @@ module.exports = {
 
   async deleteEntidade(req, res) {
     try {
-      const response = await entAcademicaModel.delete(req.body.nome_ent_acad, req.body.ano_abertura_acad);
+      console.log("** Deletando Entidade **");
+      const response = await entAcademicaModel.delete(req.body.nome_ent_acad);
       if(response.affectedRows != 0) return res.status(200).json({response});
       else return res.status(500).json({msg: 'Entidade já foi deletada ou é inexistente.'});
     } catch (error) {

@@ -107,6 +107,7 @@ module.exports = {
 
   async deleteCurso(req, res) {
     try {
+      console.log("** Deletar curso **")
       console.log(req.body);
       const seek = await cursoModel.getByCursoNome(req.body.nome_curso);
       if (seek.length === 0) {

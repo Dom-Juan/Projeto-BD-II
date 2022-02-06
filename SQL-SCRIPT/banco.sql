@@ -570,18 +570,21 @@ end;
 delimiter ;
 
 /* Procedure de deletar uma coluna de curso. */
-delimiter $$
+delimiter //
 create procedure `deletar_curso_tabela`(nome_curso_a_ser_deletado varchar(50), nome_responsavel varchar(50))
 begin
  /* Selecionando a data da execução da query */
  select cast(current_timestamp() as varchar(50)) into @agora;
 
+ delete from ent_academica  where ent_academica.curso_ent_acad  = nome_curso_a_ser_deletado;
+ delete from horas_complementares where horas_complementares.nome_curso_hora = nome_curso_a_ser_deletado;
+ delete from aux_curso where aux_curso.nome_aux_curso = nome_curso_a_ser_deletado;
  delete from curso where curso.nome_curso = nome_curso_a_ser_deletado;
 
  insert into tb_auditoria (id_, nome_tabela, data_alterado, sql_usado, nome_usuario_responsavel)
   values 
- (default, 'curso', @agora, 'delete from curso where nome_curso = nome_;', nome_responsavel);
-end;
+ (default, 'curso', @agora, 'delete from ent_academica  where ent_academica.curso_ent_acad  = nome_curso_a_ser_deletado; delete from horas_complementares where horas_complementares.nome_curso_hora = nome_curso_a_ser_deletado; delete from aux_curso where aux_curso.nome_aux_curso = nome_curso_a_ser_deletado; delete from curso where nome_curso = nome_;', nome_responsavel);
+end;//
 delimiter ;
 
 /* Procedure de deletar uma coluna de aux curso. */
@@ -756,7 +759,7 @@ end; //
 delimiter ;
 
 /* Procedure de inserir uma entidade academica. */
-delimiter $$
+delimiter //
 create procedure `inserir_enti_acad_tabela`(
  nome_ varchar(50),
  ano_abertura_ varchar(20),
@@ -780,12 +783,13 @@ begin
    'insert into ent_academica (nome_ent_acad, ano_abertura_acad, curso_ent_acad, quant_alunos_acad, quant_horas_avaliar_acad) values (nome_, ano_abertura_, curso_, quant_alunos_, quant_horas_avaliar_);',
    nome_responsavel
   );
-end;
+end//
 delimiter ;
 
 /* Procedure de atualizar entidade acadêmica. */
-delimiter $$
+delimiter //
 create procedure `atualizar_enti_acad_tabela`(
+ nome_ent_acad varchar(50),
  nome_ varchar(50),
  ano_abertura_ varchar(20),
  curso_ varchar(50),
@@ -818,7 +822,7 @@ begin
    'update ent_academica set nome_ent_acad = nome_ where nome_ent_acad = nome_ent_acad; update ent_academica set ano_abertura_acad = ano_abertura_ where nome_ent_acad = nome_ent_acad; update ent_academica set curso_ent_acad = curso_ where nome_ent_acad = nome_ent_acad; update ent_academica set quant_alunos_acad = quant_alunos_ where nome_ent_acad = nome_ent_acad; update ent_academica set quant_horas_avaliar_acad = quant_horas_avaliar_ where nome_ent_acad = nome_ent_acad;',
    nome_responsavel
   );
-end;
+end;//
 delimiter ;
 
 /* Procedures para deletar colunas corrompidas no banco. */

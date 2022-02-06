@@ -88,8 +88,8 @@ module.exports = {
 
   async getByIdFront(req, res) {
     try {
-      console.log(req.query);
-      const getId = await coordModel.getById(req.query.id_aluno_usuario);
+      console.log("**Pegando ID**\n",req.query);
+      const getId = await coordModel.getById(req.query.id_coord_usuario);
       let obj = {
         id_coord_usuario: getId[0].id_coord_usuario,
         nome_coord: getId[0].nome_coord,
