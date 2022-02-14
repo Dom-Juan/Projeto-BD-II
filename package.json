@@ -12,7 +12,7 @@
     "api",
     "bd2"
   ],
-  "author": "Juan Cardoso da silva, Luiz Felipe Canuta, Carlos Alberto.",
+  "author": "Juan Cardoso da silva, Luiz Felipe Canuta, Carlos Alberto e Igor Fernando Furucho",
   "license": "MIT",
   "dependencies": {
     "bcrypt": "^5.0.1",
