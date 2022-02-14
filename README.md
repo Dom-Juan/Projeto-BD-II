@@ -9,7 +9,7 @@ Tabela de conteúdos
 <!--te-->
 <h1 id="about"><a href="#about">Sobre</a></h1>
 <p>O projeto está pra ser feito, e ainda na fase de discusão com o professor para dar início a produção, algumas tecnologias a serem usadas estão sendo discutidas ainda.<p>
-<h4 align="center"> 
+<h4 align="left"> 
 	<p id="used">Foi utilizado um server em node js, do qual: </p>
    <ul>
       <li>Capaz de enviar commandos para serem executados no MYSQL, com call de procedures</li>
@@ -17,7 +17,7 @@ Tabela de conteúdos
       <li>Capaz de aceitar e processar arquivos junto ao banco</li>
    </ul>
 </h4>
-<h4 align="center"> 
+<h4 align="left"> 
 	<p id="tech">As tecnologias utulizadas seguem como: </p>
    <ul>
       <li>Node JS</li>
